@@ -1,0 +1,45 @@
+---
+name: Build docker image (base)
+
+concurrency: "docker-base-image"
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - resources/docker/Dockerfile.base
+  workflow_dispatch:
+  schedule:
+    - cron:  '0 0 * * *'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - run: |
+          make "$GITHUB_ENV"
+
+      - name: Build and push
+        uses: nhatthm/gh-actions/docker-build-and-push@master
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+          context: .
+          push: true
+          file: resources/docker/Dockerfile.base
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:base
+          build-args: |
+            PYTHON_VERSION=${{ env.PYTHON_VERSION }}
+            ALPINE_VERSION=${{ env.ALPINE_VERSION }}

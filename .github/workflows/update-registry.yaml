@@ -1,0 +1,22 @@
+---
+name: 'update-registry'
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - v*
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - name: Notify registries
+        uses: nhatthm/gh-actions/notify-go-registries@master
+        with:
+          token: ${{ secrets.REGISTRY_TOKEN }}

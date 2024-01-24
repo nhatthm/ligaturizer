@@ -1,0 +1,25 @@
+---
+name: 'Delete GitHub Release'
+description: 'Delete a GitHub release'
+
+inputs:
+  release:
+    description: "Release name"
+    required: true
+  token:
+    description: 'Github token'
+    required: false
+    default: ${{ github.token }}
+
+outputs: {}
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Delete Release"
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+      run: >
+        gh release delete ${{ inputs.release }} --yes || true
+        git push origin :${{ inputs.release }} || yes

@@ -1,0 +1,237 @@
+---
+name: Test
+
+on:
+  pull_request:
+
+env:
+  GO111MODULE: "on"
+  VERSION: PR-${{ github.event.pull_request.number }}
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      go-latest-version: ${{ steps.find-go-version.outputs.go-latest-version }}
+      go-supported-versions: ${{ steps.find-go-version.outputs.go-supported-versions }}
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - id: find-go-version
+        name: Find Go version
+        uses: nhatthm/gh-actions/find-go-version@master
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ${{ fromJson(needs.setup.outputs.go-supported-versions) }}
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/nhatthm/ligaturizer:actions
+    needs: [setup]
+    env:
+      GO_LATEST_VERSION: ${{ needs.setup.outputs.go-latest-version }}
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - name: Install Go
+        uses: nhatthm/gh-actions/setup-go@master
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Test
+        run: |
+          make test
+
+      - name: Upload code coverage (unit)
+        if: matrix.go-version == env.GO_LATEST_VERSION
+        uses: nhatthm/gh-actions/codecov@master
+        with:
+          files: ./unit.coverprofile
+          flags: unittests-${{ runner.os }}
+
+      #- name: Upload code coverage (features)
+      #  if: matrix.go-version == env.GO_LATEST_VERSION
+      #  uses: nhatthm/gh-actions/codecov@master
+      #  with:
+      #    file: ./features.coverprofile
+      #    flags: featurestests-${{ runner.os }}
+
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    needs: [setup, test]
+    env:
+      GO_LATEST_VERSION: ${{ needs.setup.outputs.go-latest-version }}
+    outputs:
+      build-name: ${{ steps.build.outputs.BUILD_NAME }}
+      build-dir: ${{ steps.build.outputs.BUILD_DIR }}
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - name: Setup
+        run: |
+          make "$GITHUB_ENV"
+
+      - name: Install python
+        uses: nhatthm/gh-actions/setup-python@master
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Go
+        uses: nhatthm/gh-actions/setup-go@master
+        with:
+          go-version: ${{ env.GO_LATEST_VERSION }}
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-dev python3-fontforge
+          ls -la /usr/lib/python3/dist-packages/
+
+      - name: Build
+        id: build
+        run: |
+          BUILD_NAME="ligaturizer-${VERSION}-ubuntu-amd64"
+          BUILD_DIR="out/${BUILD_NAME}"
+          CGO_ENABLED=1 BUILD_DIR="${BUILD_DIR}/" VERSION="${VERSION}" make build
+          echo "BUILD_NAME=${BUILD_NAME}" >> "$GITHUB_OUTPUT"
+          echo "BUILD_DIR=${BUILD_DIR}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload Artifact
+        uses: nhatthm/gh-actions/upload-artifact@master
+        with:
+          name: ${{ steps.build.outputs.BUILD_NAME }}
+          path: ${{ steps.build.outputs.BUILD_DIR }}
+
+  build-macos:
+    runs-on: macos-14
+    needs: [setup, test]
+    env:
+      GO_LATEST_VERSION: ${{ needs.setup.outputs.go-latest-version }}
+    outputs:
+      build-name: ${{ steps.build.outputs.BUILD_NAME }}
+      build-dir: ${{ steps.build.outputs.BUILD_DIR }}
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - name: Setup
+        run: |
+          make "$GITHUB_ENV"
+
+      - name: Install Go
+        uses: nhatthm/gh-actions/setup-go@master
+        with:
+          go-version: ${{ env.GO_LATEST_VERSION }}
+
+      - name: Install Dependencies
+        run: |
+          brew install python@3.11 fontforge || true
+          brew link --overwrite --force python@3.11 || true
+
+      - name: Build
+        id: build
+        run: |
+          BUILD_NAME="ligaturizer-${VERSION}-darwin-arm64"
+          BUILD_DIR="out/${BUILD_NAME}"
+          CGO_ENABLED=1 BUILD_DIR="${BUILD_DIR}/" VERSION="${VERSION}" make build
+          echo "BUILD_NAME=${BUILD_NAME}" >> "$GITHUB_OUTPUT"
+          echo "BUILD_DIR=${BUILD_DIR}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload Artifact
+        uses: nhatthm/gh-actions/upload-artifact@master
+        with:
+          name: ${{ steps.build.outputs.BUILD_NAME }}
+          path: ${{ steps.build.outputs.BUILD_DIR }}
+
+  release-github:
+    permissions:
+      contents: write
+      packages: write
+    needs: [build-ubuntu, build-macos]
+    runs-on: ubuntu-latest
+    env:
+      GO_LATEST_VERSION: ${{ needs.setup.outputs.go-latest-version }}
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - name: Download linux artifact
+        uses: nhatthm/gh-actions/download-artifact@master
+        with:
+          name: ${{ needs.build-ubuntu.outputs.build-name }}
+          path: ${{ github.workspace }}/archive/${{ needs.build-ubuntu.outputs.build-name }}
+
+      - name: Download macos artifact
+        uses: nhatthm/gh-actions/download-artifact@master
+        with:
+          name: ${{ needs.build-macos.outputs.build-name }}
+          path: ${{ github.workspace }}/archive/${{ needs.build-macos.outputs.build-name }}
+
+      - name: Packing
+        run: |
+          cd archive/
+
+          for i in ./*; do
+            RELEASE=$(basename "${i}")
+
+            echo "Packing binary for ${RELEASE}..."
+            chmod +x "${RELEASE}/ligaturizer"
+            tar -czf "${RELEASE}.tar.gz" "${RELEASE}"
+          done
+
+      - name: Delete release (${{ env.VERSION }})
+        uses: ./.github/actions/delete-release
+        with:
+          release: ${{ env.VERSION }}
+
+      - name: Release (${{ env.VERSION }})
+        uses: nhatthm/gh-actions/github-release@master
+        with:
+          name: "${{ env.VERSION }}"
+          tag_name: "${{ env.VERSION }}"
+          draft: true
+          files: "./archive/*.tar.gz"
+          generate_release_notes: "true"
+
+  release-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    needs: [test]
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - name: Find Go version
+        uses: nhatthm/gh-actions/find-go-version@master
+
+      - name: Normalize Go version
+        run: |
+          echo "GO_VERSION=$(echo "$GO_VERSION" | cut -d '.' -f 1-2)" >> "$GITHUB_ENV"
+
+      - run: |
+          make "$GITHUB_ENV"
+
+      - name: Build and push
+        uses: nhatthm/gh-actions/docker-build-and-push@master
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+          context: .
+          push: true
+          file: resources/docker/Dockerfile
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+          build-args: |
+            GO_VERSION=${{ env.GO_VERSION }}
+            PYTHON_VERSION=${{ env.PYTHON_VERSION }}
+            ALPINE_VERSION=${{ env.ALPINE_VERSION }}
+            VERSION=${{ env.VERSION }}
+            USER=${{ github.actor }}
+            REVISION=${{ github.sha }}
