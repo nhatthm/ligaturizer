@@ -1,0 +1,60 @@
+---
+name: test
+
+on:
+  pull_request:
+
+env:
+  GO111MODULE: "on"
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      go-latest-version: ${{ steps.find-go-version.outputs.go-latest-version }}
+      go-supported-versions: ${{ steps.find-go-version.outputs.go-supported-versions }}
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - id: find-go-version
+        name: Find Go version
+        uses: nhatthm/gh-actions/find-go-version@master
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ${{ fromJson(needs.setup.outputs.go-supported-versions) }}
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/nhatthm/ligaturizer:actions
+    needs: [setup]
+    env:
+      GO_LATEST_VERSION: ${{ needs.setup.outputs.go-latest-version }}
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - name: Install Go
+        uses: nhatthm/gh-actions/setup-go@master
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Test
+        run: |
+          make test
+
+      - name: Upload code coverage (unit)
+        if: matrix.go-version == env.GO_LATEST_VERSION
+        uses: nhatthm/gh-actions/codecov@master
+        with:
+          files: ./unit.coverprofile
+          flags: unittests-${{ runner.os }}
+
+      #- name: Upload code coverage (features)
+      #  if: matrix.go-version == env.GO_LATEST_VERSION
+      #  uses: nhatthm/gh-actions/codecov@master
+      #  with:
+      #    file: ./features.coverprofile
+      #    flags: featurestests-${{ runner.os }}

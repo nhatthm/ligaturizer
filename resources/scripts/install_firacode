@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+VERSION=${1:-"3.1"}
+MAJOR_VERSION=$(echo "${VERSION}" | cut -d '.' -f 1)
+
+echo "Installing FiraCode ${VERSION}"
+
+FILE="Fira_Code_v${VERSION}.zip"
+if [[ "$MAJOR_VERSION" == "3" ]]; then
+    FILE="FiraCode_${VERSION}.zip"
+fi
+
+cd /tmp
+
+curl -L "https://github.com/tonsky/FiraCode/releases/download/${VERSION}/${FILE}" -o "FiraCode_${VERSION}.zip"
+unzip "FiraCode_${VERSION}.zip" -d "FiraCode_${VERSION}"
+
+mkdir -p "/opt/fonts/FiraCode${VERSION}"
+ln -s "/opt/fonts/FiraCode${VERSION}" "/opt/fonts/FiraCode${MAJOR_VERSION}"
+
+mv "FiraCode_${VERSION}/ttf" "/opt/fonts/FiraCode${VERSION}"
+
+if [[ -d "FiraCode_${VERSION}/otf" ]]; then
+    mv "FiraCode_${VERSION}/otf" "/opt/fonts/FiraCode${VERSION}"
+fi
+
+rm -rf "FiraCode_${VERSION}.zip" "FiraCode_${VERSION}"

@@ -1,0 +1,29 @@
+---
+name: lint
+
+on:
+  pull_request:
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/nhatthm/ligaturizer:actions
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - name: Setup
+        uses: nhatthm/gh-actions/find-go-version@master
+
+      - name: Install Go
+        uses: nhatthm/gh-actions/setup-go@master
+        with:
+          go-version: ${{ env.GO_LATEST_VERSION }}
+
+      - run: |
+          git config --global --add safe.directory .
+
+      - name: Lint
+        uses: nhatthm/gh-actions/golangci-lint@master

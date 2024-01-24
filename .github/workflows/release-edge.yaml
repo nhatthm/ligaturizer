@@ -1,0 +1,127 @@
+---
+name: Release (Edge)
+
+concurrency: "release-edge"
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      go-latest-version: ${{ steps.find-go-version.outputs.go-latest-version }}
+      go-supported-versions: ${{ steps.find-go-version.outputs.go-supported-versions }}
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - id: find-go-version
+        name: Find Go version
+        uses: nhatthm/gh-actions/find-go-version@master
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/nhatthm/ligaturizer:actions
+    needs: [setup]
+    env:
+      GO_LATEST_VERSION: ${{ needs.setup.outputs.go-latest-version }}
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - name: Install Go
+        uses: nhatthm/gh-actions/setup-go@master
+        with:
+          go-version: ${{ env.GO_LATEST_VERSION }}
+
+      - run: |
+          git config --global --add safe.directory .
+
+      - name: Lint
+        uses: nhatthm/gh-actions/golangci-lint@master
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ${{ fromJson(needs.setup.outputs.go-supported-versions) }}
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/nhatthm/ligaturizer:actions
+    needs: [setup]
+    env:
+      GO_LATEST_VERSION: ${{ needs.setup.outputs.go-latest-version }}
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - name: Install Go
+        uses: nhatthm/gh-actions/setup-go@master
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Test
+        run: |
+          make test
+
+      - name: Upload code coverage (unit)
+        if: matrix.go-version == env.GO_LATEST_VERSION
+        uses: nhatthm/gh-actions/codecov@master
+        with:
+          files: ./unit.coverprofile
+          flags: unittests-${{ runner.os }}
+
+      #- name: Upload code coverage (features)
+      #  if: matrix.go-version == env.GO_LATEST_VERSION
+      #  uses: nhatthm/gh-actions/codecov@master
+      #  with:
+      #    file: ./features.coverprofile
+      #    flags: featurestests-${{ runner.os }}
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    needs: [test]
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - name: Find Go version
+        uses: nhatthm/gh-actions/find-go-version@master
+
+      - name: Normalize Go version
+        run: |
+          echo "GO_VERSION=$(echo "$GO_VERSION" | cut -d '.' -f 1-2)" >> "$GITHUB_ENV"
+
+      - run: |
+          make "$GITHUB_ENV"
+
+      - name: Build and push
+        uses: nhatthm/gh-actions/docker-build-and-push@master
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+          context: .
+          push: true
+          file: resources/docker/Dockerfile
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:edge
+          build-args: |
+            GO_VERSION=${{ env.GO_VERSION }}
+            PYTHON_VERSION=${{ env.PYTHON_VERSION }}
+            ALPINE_VERSION=${{ env.ALPINE_VERSION }}
+            VERSION=edge
+            USER=${{ github.actor }}
+            REVISION=${{ github.sha }}

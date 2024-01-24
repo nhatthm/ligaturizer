@@ -1,0 +1,21 @@
+ARG PYTHON_VERSION=3.11
+ARG ALPINE_VERSION=3.19
+FROM python:${PYTHON_VERSION}-alpine${ALPINE_VERSION}
+
+RUN set -ex \
+    && apk --no-cache add ca-certificates bash curl py3-fontforge \
+    && ln -s /usr/lib/python3.11/site-packages/fontforge.so /usr/local/lib/python3.11/site-packages/fontforge.so \
+    && ln -s /usr/lib/python3.11/site-packages/psMat.so  /usr/local/lib/python3.11/site-packages/psMat.so \
+    && mkdir -p /opt/fonts
+
+ADD --chmod=+x resources/scripts/install_firacode /usr/bin/install_firacode
+
+## Install FiraCode.
+RUN set -ex \
+    && install_firacode 3.1 \
+    && install_firacode 4 \
+    && install_firacode 5.2 \
+    && install_firacode 6.2 \
+    && ln -s /opt/fonts/Firacode3 /opt/fonts/FiraCode
+
+CMD ["python3"]

@@ -1,0 +1,43 @@
+---
+name: Build docker image (actions)
+
+concurrency: "docker-actions-image"
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+  schedule:
+    - cron:  '15 0 * * *'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - run: |
+          make "$GITHUB_ENV"
+
+      - name: Build and push
+        uses: nhatthm/gh-actions/docker-build-and-push@master
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+          context: .
+          push: true
+          file: resources/docker/Dockerfile.actions
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:actions
+          build-args: |
+            PYTHON_VERSION=${{ env.PYTHON_VERSION }}
+            ALPINE_VERSION=${{ env.ALPINE_VERSION }}
