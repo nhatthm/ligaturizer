@@ -35,7 +35,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
           name: ${{ env.IMAGE_NAME }}
-          tag: ${{ env.VERSION }}
+          tag: pr-${{ github.event.pull_request.number }}
 
   delete-notification:
     runs-on: ubuntu-latest
