@@ -1,12 +1,15 @@
 ---
-name: Test
+name: "PR: Test and Release"
 
 on:
   pull_request:
 
 env:
-  GO111MODULE: "on"
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
   VERSION: PR-${{ github.event.pull_request.number }}
+  GO111MODULE: "on"
+  CGO_ENABLED: "1"
 
 jobs:
   setup:
@@ -97,7 +100,7 @@ jobs:
         run: |
           BUILD_NAME="ligaturizer-${VERSION}-ubuntu-amd64"
           BUILD_DIR="out/${BUILD_NAME}"
-          CGO_ENABLED=1 BUILD_DIR="${BUILD_DIR}/" VERSION="${VERSION}" make build
+          BUILD_DIR="${BUILD_DIR}/" VERSION="${VERSION}" make build
           echo "BUILD_NAME=${BUILD_NAME}" >> "$GITHUB_OUTPUT"
           echo "BUILD_DIR=${BUILD_DIR}" >> "$GITHUB_OUTPUT"
 
@@ -138,7 +141,7 @@ jobs:
         run: |
           BUILD_NAME="ligaturizer-${VERSION}-darwin-arm64"
           BUILD_DIR="out/${BUILD_NAME}"
-          CGO_ENABLED=1 BUILD_DIR="${BUILD_DIR}/" VERSION="${VERSION}" make build
+          BUILD_DIR="${BUILD_DIR}/" VERSION="${VERSION}" make build
           echo "BUILD_NAME=${BUILD_NAME}" >> "$GITHUB_OUTPUT"
           echo "BUILD_DIR=${BUILD_DIR}" >> "$GITHUB_OUTPUT"
 
@@ -156,6 +159,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GO_LATEST_VERSION: ${{ needs.setup.outputs.go-latest-version }}
+    outputs:
+      release-url: ${{ steps.release.outputs.url }}
     steps:
       - name: Checkout code
         uses: nhatthm/gh-actions/checkout@master
@@ -190,13 +195,18 @@ jobs:
           release: ${{ env.VERSION }}
 
       - name: Release (${{ env.VERSION }})
+        id: release
         uses: nhatthm/gh-actions/github-release@master
         with:
           name: "${{ env.VERSION }}"
           tag_name: "${{ env.VERSION }}"
           draft: true
           files: "./archive/*.tar.gz"
-          generate_release_notes: "true"
+          body: |
+            > [!CAUTION]
+            > **!!! NOT READY FOR PRODUCTION !!!**
+            >
+            > This is a draft release for PR #${{ github.event.pull_request.number }}
 
   release-image:
     runs-on: ubuntu-latest
@@ -235,3 +245,25 @@ jobs:
             VERSION=${{ env.VERSION }}
             USER=${{ github.actor }}
             REVISION=${{ github.sha }}
+
+  send-notification:
+    runs-on: ubuntu-latest
+    needs: [release-github, release-image]
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Comment
+        uses: nhatthm/gh-actions/github-one-comment@master
+        with:
+          body-include: "<!-- release-comment -->"
+          body: |
+            <!-- release-comment -->
+
+            Draft release with binaries included: [`${{ env.VERSION }}`](${{ needs.release-github.outputs.release-url }})
+
+            Install docker image from the command line
+
+            ```
+            $ docker pull ghcr.io/nhatthm/ligaturizer:pr-${{ github.event.pull_request.number }}
+            ```
