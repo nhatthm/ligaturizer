@@ -256,8 +256,10 @@ jobs:
       - name: Comment
         uses: nhatthm/gh-actions/github-one-comment@master
         with:
-          body-include: '<!-- release-comment -->'
+          body-include: "<!-- release-comment -->"
           body: |
+            <!-- release-comment -->
+
             Draft release with binaries included: [`${{ env.VERSION }}`](${{ needs.release-github.outputs.release-url }})
 
             Install docker image from the command line
