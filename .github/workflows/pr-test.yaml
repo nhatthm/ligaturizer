@@ -1,12 +1,13 @@
 ---
-name: Test
+name: "PR: Test and Release"
 
 on:
   pull_request:
 
 env:
-  GO111MODULE: "on"
   VERSION: PR-${{ github.event.pull_request.number }}
+  GO111MODULE: "on"
+  CGO_ENABLED: "1"
 
 jobs:
   setup:
@@ -97,7 +98,7 @@ jobs:
         run: |
           BUILD_NAME="ligaturizer-${VERSION}-ubuntu-amd64"
           BUILD_DIR="out/${BUILD_NAME}"
-          CGO_ENABLED=1 BUILD_DIR="${BUILD_DIR}/" VERSION="${VERSION}" make build
+          BUILD_DIR="${BUILD_DIR}/" VERSION="${VERSION}" make build
           echo "BUILD_NAME=${BUILD_NAME}" >> "$GITHUB_OUTPUT"
           echo "BUILD_DIR=${BUILD_DIR}" >> "$GITHUB_OUTPUT"
 
@@ -138,7 +139,7 @@ jobs:
         run: |
           BUILD_NAME="ligaturizer-${VERSION}-darwin-arm64"
           BUILD_DIR="out/${BUILD_NAME}"
-          CGO_ENABLED=1 BUILD_DIR="${BUILD_DIR}/" VERSION="${VERSION}" make build
+          BUILD_DIR="${BUILD_DIR}/" VERSION="${VERSION}" make build
           echo "BUILD_NAME=${BUILD_NAME}" >> "$GITHUB_OUTPUT"
           echo "BUILD_DIR=${BUILD_DIR}" >> "$GITHUB_OUTPUT"
 

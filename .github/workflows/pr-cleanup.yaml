@@ -1,0 +1,39 @@
+---
+name: "PR: Cleanup"
+
+on:
+  pull_request:
+    types:
+      - closed
+
+env:
+  VERSION: PR-${{ github.event.pull_request.number }}
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  delete-release:
+    name: Delete release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
+      - name: Delete release
+        uses: ./.github/actions/delete-release
+        with:
+          release: ${{ env.VERSION }}
+
+  delete-image:
+    name: Delete image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Delete image
+        uses: nhatthm/gh-actions/docker-delete-image@master
+        with:
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+          name: ${{ env.IMAGE_NAME }}
+          tag: ${{ env.VERSION }}
