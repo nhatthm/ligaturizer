@@ -237,7 +237,7 @@ jobs:
           context: .
           push: true
           file: resources/docker/Dockerfile
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.event.pull_request.number }}
           build-args: |
             GO_VERSION=${{ env.GO_VERSION }}
             PYTHON_VERSION=${{ env.PYTHON_VERSION }}
