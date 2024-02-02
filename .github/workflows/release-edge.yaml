@@ -12,6 +12,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  IMAGE_TAG: edge
   VERSION: edge
   CGO_ENABLED: "1"
 
@@ -256,7 +257,7 @@ jobs:
           context: .
           push: true
           file: resources/docker/Dockerfile
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           build-args: |
             GO_VERSION=${{ env.GO_VERSION }}
             PYTHON_VERSION=${{ env.PYTHON_VERSION }}
