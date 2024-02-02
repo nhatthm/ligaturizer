@@ -5,6 +5,8 @@ on:
   pull_request:
 
 env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
   VERSION: PR-${{ github.event.pull_request.number }}
   GO111MODULE: "on"
   CGO_ENABLED: "1"
@@ -197,7 +199,11 @@ jobs:
           tag_name: "${{ env.VERSION }}"
           draft: true
           files: "./archive/*.tar.gz"
-          generate_release_notes: "true"
+          body: |
+            > [!CAUTION]
+            > **!!! NOT READY FOR PRODUCTION !!!**
+            >
+            > This is a draft release for PR #${{ github.event.pull_request.number }}
 
   release-image:
     runs-on: ubuntu-latest
