@@ -14,6 +14,9 @@ jobs:
   delete-release:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: nhatthm/gh-actions/checkout@master
+
       - name: Delete release
         uses: nhatthm/gh-actions/github-delete-release@master
         with:
