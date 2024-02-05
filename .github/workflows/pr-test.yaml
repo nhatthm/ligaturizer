@@ -10,7 +10,6 @@ env:
   IMAGE_TAG: pr-${{ github.event.pull_request.number }}
   VERSION: PR-${{ github.event.pull_request.number }}
   GO111MODULE: "on"
-  CGO_ENABLED: "1"
 
 jobs:
   setup:
@@ -134,8 +133,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          brew install python@3.11 fontforge || true
-          brew link --overwrite --force python@3.11 || true
+          brew install python@${{ env.PYTHON_VERSION }} fontforge || true
+          brew link --overwrite --force python@${{ env.PYTHON_VERSION }} || true
 
       - name: Build
         id: build
@@ -191,7 +190,7 @@ jobs:
           done
 
       - name: Delete release (${{ env.VERSION }})
-        uses: ./.github/actions/delete-release
+        uses: nhatthm/gh-actions/github-delete-release@master
         with:
           release: ${{ env.VERSION }}
 

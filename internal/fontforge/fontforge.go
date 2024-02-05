@@ -2,6 +2,7 @@ package fontforge
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/spf13/afero"
 
@@ -10,11 +11,14 @@ import (
 
 const moduleName = "fontforge"
 
-var module *python3.Object
+var getModule = sync.OnceValue(func() *python3.Object {
+	module, err := python3.ImportModule(moduleName)
+	if err != nil {
+		panic(err)
+	}
 
-func init() { //nolint: gochecknoinits
-	module = python3.MustImportModule(moduleName)
-}
+	return module
+})
 
 // Open opens a font file.
 func Open(path string) (*Font, error) {
@@ -23,7 +27,7 @@ func Open(path string) (*Font, error) {
 		return nil, fmt.Errorf("%w: %q", afero.ErrFileNotFound, path)
 	}
 
-	f := module.CallMethodArgs("open", path)
+	f := getModule().CallMethodArgs("open", path)
 
 	if err := python3.LastError(); err != nil {
 		return nil, err //nolint: wrapcheck

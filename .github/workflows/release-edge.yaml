@@ -14,7 +14,6 @@ env:
   IMAGE_NAME: ${{ github.repository }}
   IMAGE_TAG: edge
   VERSION: edge
-  CGO_ENABLED: "1"
 
 jobs:
   setup:
@@ -160,8 +159,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          brew install python@3.11 fontforge || true
-          brew link --overwrite --force python@3.11 || true
+          brew install python@${{ env.PYTHON_VERSION }} fontforge || true
+          brew link --overwrite --force python@${{ env.PYTHON_VERSION }} || true
 
       - name: Build
         id: build

@@ -38,7 +38,8 @@ test-unit:
 
 .PHONY: build
 build:
-	@$(GO) build -ldflags "$(shell ./resources/scripts/build_args)" -o $(BUILD_DIR)/$(APP) cmd/$(APP)/main.go && \
+	@env CGO_ENABLED=1 \
+	$(GO) build -ldflags "$(shell ./resources/scripts/build_args)" -o $(BUILD_DIR)/$(APP) cmd/$(APP)/main.go && \
 		chmod +x $(BUILD_DIR)/$(APP)
 
 .PHONY: $(GITHUB_OUTPUT)
