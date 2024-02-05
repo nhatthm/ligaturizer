@@ -42,6 +42,8 @@ the [nightly build](https://github.com/nhatthm/ligaturizer/releases/tag/edge) (`
 
 Once downloaded, the binary can be run from anywhere. Ideally, though, you should move it into your `$PATH` for easy use. `/usr/local/bin` is a popular location for this.
 
+If you want to build from source, run `make build`, the binary will be available at `./out/ligaturizer`.
+
 [<sub><sup>[table of contents]</sup></sub>](#table-of-contents)
 
 ## Usage

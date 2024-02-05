@@ -14,7 +14,18 @@ import (
 func Run() {
 	defer python3.Finalize()
 
+	defer func() {
+		r := recover()
+		if err, ok := r.(error); ok {
+			printError("%T: %s", err, err)
+		}
+	}()
+
 	if err := rootCommand().Execute(); err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, color.HiRedString("%s", err))
+		printError("%s", err)
 	}
+}
+
+func printError(format string, args ...any) {
+	_, _ = fmt.Fprintln(os.Stderr, color.HiRedString(format, args...))
 }

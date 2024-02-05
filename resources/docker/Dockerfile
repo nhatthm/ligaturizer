@@ -12,7 +12,7 @@ COPY ../.. .
 RUN set -ex \
     && apk --no-cache add ca-certificates bash gcc musl-dev git pkgconfig make python3-dev
 
-RUN CGO_ENABLED=1 VERSION=$VERSION REVISION=$REVISION USER=$USER make build
+RUN VERSION=$VERSION REVISION=$REVISION USER=$USER make build
 
 FROM ghcr.io/nhatthm/ligaturizer:base
 
