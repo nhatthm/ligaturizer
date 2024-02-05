@@ -2,12 +2,12 @@ ARG PYTHON_VERSION=3.11
 ARG ALPINE_VERSION=3.19
 FROM python:${PYTHON_VERSION}-alpine${ALPINE_VERSION}
 
-ENV PYTHON_VERSION=${PYTHON_VERSION}
+ENV PYTHON_MINOR_VERSION=${PYTHON_VERSION}
 
 RUN set -ex \
     && apk --no-cache add ca-certificates bash curl py3-fontforge git make jq \
-    && ln -s /usr/lib/python${PYTHON_VERSION}/site-packages/fontforge.so /usr/local/lib/python${PYTHON_VERSION}/site-packages/fontforge.so \
-    && ln -s /usr/lib/python${PYTHON_VERSION}/site-packages/psMat.so  /usr/local/lib/python${PYTHON_VERSION}/site-packages/psMat.so \
+    && ln -s /usr/lib/python${PYTHON_MINOR_VERSION}/site-packages/fontforge.so /usr/local/lib/python${PYTHON_MINOR_VERSION}/site-packages/fontforge.so \
+    && ln -s /usr/lib/python${PYTHON_MINOR_VERSION}/site-packages/psMat.so  /usr/local/lib/python${PYTHON_MINOR_VERSION}/site-packages/psMat.so \
     && mkdir -p /opt/fonts
 
 ADD --chmod=+x resources/scripts/install_firacode /usr/bin/install_firacode
