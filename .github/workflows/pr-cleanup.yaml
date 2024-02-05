@@ -8,35 +8,28 @@ on:
 
 env:
   VERSION: PR-${{ github.event.pull_request.number }}
-  IMAGE_NAME: ligaturizer
   IMAGE_TAG: pr-${{ github.event.pull_request.number }}
 
 jobs:
   delete-release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: nhatthm/gh-actions/checkout@master
-
       - name: Delete release
-        uses: ./.github/actions/delete-release
+        uses: nhatthm/gh-actions/github-delete-release@master
         with:
           release: ${{ env.VERSION }}
 
   delete-image:
-    name: Delete image
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
       - name: Delete image
-        uses: nhatthm/gh-actions/docker-delete-image@master
+        uses: nhatthm/gh-actions/github-delete-package-release@master
         with:
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-          name: ${{ env.IMAGE_NAME }}
-          tag: ${{ env.IMAGE_TAG }}
+          type: "container"
+          version: ${{ env.IMAGE_TAG }}
 
   delete-notification:
     runs-on: ubuntu-latest

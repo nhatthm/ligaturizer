@@ -215,7 +215,7 @@ jobs:
           done
 
       - name: Delete release (${{ env.VERSION }})
-        uses: ./.github/actions/delete-release
+        uses: nhatthm/gh-actions/github-delete-release@master
         with:
           release: ${{ env.VERSION }}
 
