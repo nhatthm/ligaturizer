@@ -209,6 +209,12 @@ jobs:
             >
             > This is a draft release for PR #${{ github.event.pull_request.number }}
 
+            Install docker image from the command line
+
+            ```
+            $ docker pull ghcr.io/nhatthm/ligaturizer:${{ env.IMAGE_TAG }}
+            ```
+
   release-image:
     runs-on: ubuntu-latest
     permissions:
