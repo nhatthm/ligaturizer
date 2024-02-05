@@ -26,7 +26,7 @@ jobs:
       packages: write
     steps:
       - name: Delete image
-        uses: nhatthm/gh-actions/github-delete-package-release@master
+        uses: nhatthm/gh-actions/github-delete-image@master
         with:
           type: "container"
           version: ${{ env.IMAGE_TAG }}
