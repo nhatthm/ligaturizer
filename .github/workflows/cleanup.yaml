@@ -1,0 +1,19 @@
+---
+name: Cleanup
+
+concurrency: "cleanup"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  '0 1 * * *'
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Delete untagged images
+        uses: nhatthm/gh-actions/github-delete-untagged-images@master
