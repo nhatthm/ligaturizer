@@ -33,10 +33,8 @@ func Ligaturize(
 }
 
 func updateFontMetadata(font *fontforge.Font, newFamilyName string) {
-	curFamilyName := font.FamilyName()
 	suffix := ""
-
-	if parts := strings.Split(curFamilyName, "-"); len(parts) >= 2 {
+	if parts := strings.Split(font.FontName(), "-"); len(parts) >= 2 {
 		suffix = parts[1]
 	}
 
