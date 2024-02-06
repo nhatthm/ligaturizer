@@ -58,13 +58,16 @@ func updateFontMetadata(font *fontforge.Font, newFamilyName string) {
 }
 
 func updateCopyright(src, dst *fontforge.Font) {
+	fontCopyright := dst.Copyright()
+	fontSFNTCopyright := dst.SFNTNames().Find("Copyright")
+
 	dst.SetCopyright(formatCopyright(
 		src.Copyright(),
-		dst.Copyright(),
+		fontCopyright,
 	))
 	dst.SetSFNTNames("Copyright", formatCopyright(
 		src.SFNTNames().Find("Copyright"),
-		dst.SFNTNames().Find("Copyright"),
+		fontSFNTCopyright,
 	))
 }
 
