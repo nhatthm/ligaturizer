@@ -264,7 +264,7 @@ func makeLigaturizer(ligFont *fontforge.Font, logger ctxd.Logger) (ligaturizer.L
 }
 
 const (
-	copyrightTool        = `Ligaturized by Ligaturizer %s (https://github.com/nhatthm/ligaturizer) using %s v%s`
+	copyrightTool        = `Ligaturized by Ligaturizer v%s (https://github.com/nhatthm/ligaturizer) using %s v%s`
 	copyrightInspiration = `Inspired by ToxicFrog's Ligaturizer (https://github.com/ToxicFrog/Ligaturizer)`
 )
 
@@ -277,15 +277,11 @@ func updateCopyright(src, dst *fontforge.Font) {
 	}
 
 	toolCopyright := fmt.Sprintf(copyrightTool, version.Info().Version, srcFontName, srcVersion)
+	fontCopyright := dst.Copyright()
+	fontSFNTCopyright := dst.SFNTNames().Find("Copyright")
 
-	dst.SetCopyright(formatCopyright(
-		dst.Copyright(),
-		toolCopyright,
-	))
-	dst.SetSFNTNames("Copyright", formatCopyright(
-		dst.SFNTNames().Find("Copyright"),
-		toolCopyright,
-	))
+	dst.SetCopyright(formatCopyright(fontCopyright, toolCopyright))
+	dst.SetSFNTNames("Copyright", formatCopyright(fontSFNTCopyright, toolCopyright))
 }
 
 func formatCopyright(copyright, toolCopyright string) string {
