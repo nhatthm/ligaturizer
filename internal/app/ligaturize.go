@@ -267,7 +267,7 @@ func makeLigaturizer(ligFont *fontforge.Font, logger ctxd.Logger) (ligaturizer.L
 }
 
 const (
-	copyrightTool        = `Ligaturized by Ligaturizer v%s (https://github.com/nhatthm/ligaturizer) using %s v%s`
+	copyrightTool        = `Ligaturized by Ligaturizer %s (https://github.com/nhatthm/ligaturizer) using %s %s`
 	copyrightInspiration = `Inspired by ToxicFrog's Ligaturizer (https://github.com/ToxicFrog/Ligaturizer)`
 )
 
