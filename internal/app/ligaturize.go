@@ -87,6 +87,7 @@ this will result in punctuation that matches the ligatures more closely, but may
 	cmd.Flags().Float64Var(&ligaturizerCfg.ScaleCharacterGlyphThreshold, "scale-character-glyph-threshold", ligaturizerCfg.ScaleCharacterGlyphThreshold,
 		`when copying character glyphs, if they differ in width from the width of the input font by at least this much, scale them horizontally to match the input font even if this noticeably changes their aspect ratio. the default (0.1) means to scale if they are at least 10%% wider or narrower. a value of 0 will scale all copied character glyphs; a value of 2 effectively disables character glyph scaling`,
 	)
+	cmd.Flags().StringVar(&ligaturizerCfg.BuildID, "build-id", ligaturizerCfg.BuildID, "build id to be added to the font version")
 
 	cmd.Flags().SetAnnotation("input-font-file", cobra.BashCompFilenameExt, []string{"otf", "ttf"})    //nolint: errcheck,gosec
 	cmd.Flags().SetAnnotation("ligature-font-file", cobra.BashCompFilenameExt, []string{"otf", "ttf"}) //nolint: errcheck,gosec
@@ -104,6 +105,7 @@ type ligaturizerConfig struct {
 	OutputNamePrefix             string  `envconfig:"OUTPUT_NAME_PREFIX" default:"Liga"`
 	CopyCharacterGlyphs          bool    `envconfig:"COPY_CHARACTER_GLYPHS" default:"false"`
 	ScaleCharacterGlyphThreshold float64 `envconfig:"SCALE_CHARACTER_GLYPH_THRESHOLD" default:"0.1"`
+	BuildID                      string  `envconfig:"BUILD_ID"`
 }
 
 func loadLigatureConfig() error {
@@ -177,6 +179,7 @@ func runLigaturize(ctx context.Context, cfg ligaturizerConfig, logger ctxd.Logge
 
 	// Footprint.
 	updateCopyright(ligFont, inputFont)
+	updateVersion(inputFont, cfg.BuildID)
 
 	// Output.
 	outputType := ".ttf"
@@ -282,6 +285,18 @@ func updateCopyright(src, dst *fontforge.Font) {
 
 	dst.SetCopyright(formatCopyright(fontCopyright, toolCopyright))
 	dst.SetSFNTNames("Copyright", formatCopyright(fontSFNTCopyright, toolCopyright))
+}
+
+func updateVersion(f *fontforge.Font, buildID string) {
+	ov := f.Version()
+	if ov == nil {
+		return
+	}
+
+	v, _ := ov.SetMetadata(buildID) //nolint: errcheck
+
+	f.SetVersion(v)
+	f.SetSFNTNames("Version", fmt.Sprintf("Version %s", v.String()))
 }
 
 func formatCopyright(copyright, toolCopyright string) string {

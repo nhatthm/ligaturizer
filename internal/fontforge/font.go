@@ -173,6 +173,11 @@ func (f *Font) Version() *semver.Version {
 	return v
 }
 
+// SetVersion sets the version of the font.
+func (f *Font) SetVersion(version semver.Version) {
+	f.obj.SetAttr("version", version.String())
+}
+
 // HasGlyph returns true if the font has the glyph.
 func (f *Font) HasGlyph(glyph any) bool {
 	return f.obj.HasItem(glyph)
