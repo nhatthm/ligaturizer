@@ -293,7 +293,12 @@ func updateVersion(f *fontforge.Font, buildID string) {
 		return
 	}
 
-	v, _ := ov.SetMetadata(buildID) //nolint: errcheck
+	m := buildID
+	if cm := ov.Metadata(); cm != "" {
+		m = fmt.Sprintf("%s.%s", cm, m)
+	}
+
+	v, _ := ov.SetMetadata(m) //nolint: errcheck
 
 	f.SetVersion(v)
 	f.SetSFNTNames("Version", fmt.Sprintf("Version %s", v.String()))

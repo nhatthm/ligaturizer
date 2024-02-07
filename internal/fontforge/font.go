@@ -1,6 +1,8 @@
 package fontforge
 
 import (
+	"regexp"
+
 	"github.com/Masterminds/semver/v3"
 
 	"go.nhat.io/ligaturizer/internal/python3"
@@ -168,9 +170,7 @@ func (f *Font) Version() *semver.Version {
 	attr := f.obj.GetAttr("version")
 	defer attr.DecRef()
 
-	v, _ := semver.NewVersion(python3.AsString(attr)) //nolint: errcheck
-
-	return v
+	return parseVersion(python3.AsString(attr))
 }
 
 // SetVersion sets the version of the font.
@@ -263,4 +263,16 @@ func asSFNTName(o *python3.Object) SFNTName {
 		Key:    key.String(),
 		Value:  value.String(),
 	}
+}
+
+// buildPattern is a regex pattern to detect build id in semver, such as `1.2 build 110`.
+var buildPattern = regexp.MustCompile(`\s+build\s+(\d+)$`)
+
+func parseVersion(v string) *semver.Version {
+	// Sanitize the version.
+	v = buildPattern.ReplaceAllString(v, "+$1")
+
+	r, _ := semver.NewVersion(v) //nolint: errcheck
+
+	return r
 }

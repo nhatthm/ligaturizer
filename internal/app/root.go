@@ -40,6 +40,7 @@ func rootCommand() *cobra.Command {
 	cmd.PersistentFlags().BoolVarP(&rootCfg.Verbose, "verbose", "v", rootCfg.Verbose, "verbose output")
 
 	cmd.AddCommand(
+		infoCommand(&logger),
 		versionCommand(),
 	)
 
