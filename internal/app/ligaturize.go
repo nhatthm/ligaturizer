@@ -38,21 +38,28 @@ func init() { //nolint: gochecknoinits
 
 func ligaturizeCommand(logger *ctxd.Logger) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:          "ligaturizer",
+		Use:          "ligaturizer [flags] input-font-file",
 		Short:        "Ligaturize a font",
 		SilenceUsage: true,
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if ligaturizerCfg.InputFontFile == "" {
+		Args: func(cmd *cobra.Command, args []string) error {
+			if l := len(args); l == 0 {
 				return errInputFontFileNotSpecified
+			} else if l > 1 {
+				return fmt.Errorf("accepts only 1 arg, received %d", l) //nolint: goerr113
 			}
 
+			return nil
+		},
+		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if ligaturizerCfg.LigatureFontFile == "" && ligaturizerCfg.LigatureFontDir == "" {
 				return errLigatureFontFileAndDirNotSpecified
 			}
 
 			return nil
 		},
-		RunE: func(cmd *cobra.Command, _ []string) error {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			ligaturizerCfg.InputFontFile = args[0]
+
 			return runLigaturize(cmd.Context(), ligaturizerCfg, *logger)
 		},
 	}
@@ -65,9 +72,6 @@ if unspecified, ligaturize will attempt to pick a suitable one from --ligature-f
 	)
 	cmd.Flags().StringVarP(&ligaturizerCfg.LigatureFontDir, "ligature-font-dir", "D", ligaturizerCfg.LigatureFontDir,
 		`the dir to search for ligature fonts when --ligature-font-file is unspecified.`,
-	)
-	cmd.Flags().StringVarP(&ligaturizerCfg.InputFontFile, "input-font-file", "I", ligaturizerCfg.InputFontFile,
-		`the TTF or OTF font to add ligatures to.`,
 	)
 	cmd.Flags().StringVarP(&ligaturizerCfg.OutputDir, "output-dir", "O", ligaturizerCfg.OutputDir,
 		`the directory to save the ligaturized font in.
@@ -89,9 +93,8 @@ this will result in punctuation that matches the ligatures more closely, but may
 	)
 	cmd.Flags().StringVar(&ligaturizerCfg.BuildID, "build-id", ligaturizerCfg.BuildID, "build id to be added to the font version")
 
-	cmd.Flags().SetAnnotation("input-font-file", cobra.BashCompFilenameExt, []string{"otf", "ttf"})    //nolint: errcheck,gosec
-	cmd.Flags().SetAnnotation("ligature-font-file", cobra.BashCompFilenameExt, []string{"otf", "ttf"}) //nolint: errcheck,gosec
-	cmd.Flags().SetAnnotation("ligature-font-dir", cobra.BashCompSubdirsInDir, []string{})             //nolint: errcheck,gosec
+	cmd.MarkFlagFilename("ligature-font-file", "otf", "ttf") //nolint: errcheck,gosec
+	cmd.MarkFlagDirname("ligature-font-dir")                 //nolint: errcheck,gosec
 
 	return cmd
 }
