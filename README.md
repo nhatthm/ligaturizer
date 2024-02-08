@@ -49,17 +49,15 @@ If you want to build from source, run `make build`, the binary will be available
 ## Usage
 
 ```shell
-$ ligaturizer \
+$ ligaturizer /path/to/font-file
   --ligature-font-file /path/to/firacode-v3-otf-font-file \
-  --input-font-file /path/to/font-file
 ```
 
 For example:
 
 ```shell
-$ ligaturizer \
+$ ligaturizer /opt/fonts/DejaVuSansMono.ttf \
   --ligature-font-file /opt/fonts/FiraCode3/otf/FiraCode-Regular.otf \
-  --input-font-file /opt/fonts/DejaVuSansMono.ttf
 ```
 
 > [!Note]
@@ -94,7 +92,7 @@ If you have problem with installing `fontforge` or `python3.11`, you can use the
 $ docker run --rm \
   -v /path/to/local/font-dir:/opt/fonts/output \
   -w /opt/fonts/output \
-  ghcr.io/nhatthm/ligaturizer:latest --input-font-file DejaVuSansMono.ttf
+  ghcr.io/nhatthm/ligaturizer:latest DejaVuSansMono.ttf
 ```
 
 [<sub><sup>[table of contents]</sup></sub>](#table-of-contents)
