@@ -1,28 +1,21 @@
 ---
-name: Build docker image (base)
-
-concurrency: "docker-base-image"
+name: "PR: Test docker image (base)"
 
 on:
-  push:
-    branches:
-      - master
+  pull_request:
     paths:
       - resources/docker/Dockerfile.base
-  workflow_dispatch:
-  schedule:
-    - cron:  '0 0 * * *'
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
+      packages: read
     steps:
       - name: Checkout code
         uses: nhatthm/gh-actions/checkout@master
@@ -30,14 +23,14 @@ jobs:
       - run: |
           make "$GITHUB_ENV"
 
-      - name: Build and push
+      - name: Build
         uses: nhatthm/gh-actions/docker-build-and-push@master
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ github.token }}
           context: .
-          push: true
+          push: false
           file: resources/docker/Dockerfile.base
           platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:base
