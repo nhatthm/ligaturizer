@@ -256,6 +256,7 @@ jobs:
           context: .
           push: true
           file: resources/docker/Dockerfile
+          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           build-args: |
             GO_VERSION=${{ env.GO_VERSION }}
