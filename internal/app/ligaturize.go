@@ -102,7 +102,7 @@ type ligaturizerConfig struct {
 	InputFontFile                string  `envconfig:"INPUT_FONT_FILE"`
 	OutputDir                    string  `envconfig:"OUTPUT_DIR"`
 	OutputName                   string  `envconfig:"OUTPUT_NAME"`
-	OutputNamePrefix             string  `envconfig:"OUTPUT_NAME_PREFIX" default:"Liga"`
+	OutputNamePrefix             string  `envconfig:"OUTPUT_NAME_PREFIX" default:""`
 	CopyCharacterGlyphs          bool    `envconfig:"COPY_CHARACTER_GLYPHS" default:"false"`
 	ScaleCharacterGlyphThreshold float64 `envconfig:"SCALE_CHARACTER_GLYPH_THRESHOLD" default:"0.1"`
 	BuildID                      string  `envconfig:"BUILD_ID"`
