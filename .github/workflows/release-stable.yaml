@@ -189,6 +189,17 @@ jobs:
       - run: |
           make "$GITHUB_ENV"
 
+      - name: Metadata
+        id: meta
+        uses: nhatthm/gh-actions/docker-metadata@master
+        with:
+          images: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=semver,pattern={{version}},value=${{ env.IMAGE_TAG }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ env.IMAGE_TAG }}
+
       - name: Build and push
         uses: nhatthm/gh-actions/docker-build-and-push@master
         with:
@@ -198,10 +209,11 @@ jobs:
           context: .
           push: true
           file: resources/docker/Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+          outputs: ${{ steps.meta.outputs.outputs }}
           build-args: |
             GO_VERSION=${{ env.GO_VERSION }}
             PYTHON_VERSION=${{ env.PYTHON_VERSION }}
