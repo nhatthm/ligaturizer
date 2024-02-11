@@ -1,6 +1,6 @@
 package python3
 
-import python3 "github.com/nhatthm/cpy3"
+import "go.nhat.io/cpy3"
 
 // Tuple is a Python tuple.
 type Tuple struct {
@@ -26,20 +26,20 @@ func (t *Tuple) Length() int {
 func (t *Tuple) Set(index int, value any) {
 	defer MustSuccess()
 
-	python3.PyTuple_SetItem(t.obj, index, ToPyObject(value))
+	cpy3.PyTuple_SetItem(t.obj, index, ToPyObject(value))
 }
 
 // Get returns the item at index.
 func (t *Tuple) Get(index int) *Object {
 	defer MustSuccess()
 
-	return NewObject(python3.PyTuple_GetItem(t.obj, index))
+	return NewObject(cpy3.PyTuple_GetItem(t.obj, index))
 }
 
 // NewTuple creates a new tuple.
 func NewTuple(length int) *Tuple {
 	return &Tuple{
-		obj: python3.PyTuple_New(length),
+		obj: cpy3.PyTuple_New(length),
 	}
 }
 

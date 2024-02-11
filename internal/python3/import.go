@@ -1,7 +1,7 @@
 package python3
 
 import (
-	python3 "github.com/nhatthm/cpy3"
+	"go.nhat.io/cpy3"
 	"go.nhat.io/once"
 )
 
@@ -10,7 +10,7 @@ var modules once.ValuesMap[string, *Object, error]
 // ImportModule is a wrapper around the C function PyImport_ImportModule.
 func ImportModule(name string) (*Object, error) {
 	module, err := modules.Do(name, func() (*Object, error) {
-		module := python3.PyImport_ImportModule(name)
+		module := cpy3.PyImport_ImportModule(name)
 
 		if err := LastError(); err != nil {
 			return nil, err

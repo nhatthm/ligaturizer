@@ -8,10 +8,10 @@ require (
 	github.com/bool64/zapctxd v1.1.0
 	github.com/fatih/color v1.16.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/nhatthm/cpy3 v0.0.0-20240129144749-fef16d5bdaab
 	github.com/spf13/afero v1.11.0
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
+	go.nhat.io/cpy3 v0.0.0-20240211052030-bde1bc76d495
 	go.nhat.io/once v0.2.0
 	go.uber.org/zap v1.21.0
 )

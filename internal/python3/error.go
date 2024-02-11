@@ -1,7 +1,7 @@
 package python3
 
 import (
-	python3 "github.com/nhatthm/cpy3"
+	"go.nhat.io/cpy3"
 )
 
 // Error is a Python error.
@@ -55,10 +55,10 @@ func LastError() error {
 	defer traceback.DecRef()
 
 	switch {
-	case ErrorIs(err, python3.PyExc_ModuleNotFoundError):
+	case ErrorIs(err, cpy3.PyExc_ModuleNotFoundError):
 		return newErrModuleNotFound(err)
 
-	case ErrorIs(err, python3.PyExc_ImportError):
+	case ErrorIs(err, cpy3.PyExc_ImportError):
 		return newErrImport(err)
 	}
 
@@ -71,17 +71,17 @@ func ErrorIs(err *Object, target *PyObject) bool {
 		return err.Type().PyObject() == target
 	}
 
-	return python3.PyErr_GivenExceptionMatches(err.Type().PyObject(), target)
+	return cpy3.PyErr_GivenExceptionMatches(err.Type().PyObject(), target)
 }
 
 // clearError clears the last error that occurred in the Python interpreter.
 func clearError() {
-	python3.PyErr_Clear()
+	cpy3.PyErr_Clear()
 }
 
 // fetchError returns the last error that occurred in the Python interpreter.
 func fetchError() (*Object, *Object) {
-	ex, val, traceback := python3.PyErr_Fetch()
+	ex, val, traceback := cpy3.PyErr_Fetch()
 	if ex == nil {
 		return nil, nil
 	}
