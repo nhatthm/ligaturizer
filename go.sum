@@ -33,8 +33,6 @@ github.com/mattn/go-colorable v0.1.13/go.mod h1:7S9/ev0klgBDR4GtXTXX8a3vIGJpMovk
 github.com/mattn/go-isatty v0.0.16/go.mod h1:kYGgaQfpe5nmfYZH+SKPsOc2e4SrIfOl2e/yFXSvRLM=
 github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=
 github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
-github.com/nhatthm/cpy3 v0.0.0-20240129144749-fef16d5bdaab h1:oyQzMe9EtUFBbwckIWDAnVYka7MEBR51XwzQ8odAlhk=
-github.com/nhatthm/cpy3 v0.0.0-20240129144749-fef16d5bdaab/go.mod h1:yVCFQyK+L4v9/B/8M2PJ15PYhG81k0kw4aEUQDp1lRo=
 github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
@@ -62,6 +60,8 @@ github.com/yudai/gojsondiff v1.0.0/go.mod h1:AY32+k2cwILAkW1fbgxQ5mUmMiZFgLIV+FB
 github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82 h1:BHyfKlQyqbsFN5p3IfnEUduWvb9is428/nNb5L3U01M=
 github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82/go.mod h1:lgjkn3NuSvDfVJdfcVVdX+jpBxNmX4rDAzaS45IcYoM=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
+go.nhat.io/cpy3 v0.0.0-20240211052030-bde1bc76d495 h1:F/Mbz9zhl3hyPaxNcuzuvM4Wq1hNRvpgE9TcIVqpTIA=
+go.nhat.io/cpy3 v0.0.0-20240211052030-bde1bc76d495/go.mod h1:Rz9ZP/FtMt5KgArTtj6sbeN97Jhtc1+pZfKd/pyMKPI=
 go.nhat.io/once v0.2.0 h1:tIvETkXlxRlguXN7ttubxzfkC7tUngURKl9YSigT4ic=
 go.nhat.io/once v0.2.0/go.mod h1:CXQFW8fgGQ9/IMDPkJlcTlQ+00dK3Ul4ggkptzn7fvw=
 go.uber.org/atomic v1.7.0/go.mod h1:fEN4uk6kAWBTFdckzkM89CLk9XfWZrxpCo0nPH17wJc=

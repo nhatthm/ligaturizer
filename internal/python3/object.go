@@ -1,9 +1,9 @@
 package python3
 
-import python3 "github.com/nhatthm/cpy3"
+import "go.nhat.io/cpy3"
 
 // PyObject is a wrapper around the C type python3.PyObject.
-type PyObject = python3.PyObject
+type PyObject = cpy3.PyObject
 
 // Object is a wrapper around the C type python3.PyObject.
 type Object struct {
@@ -51,7 +51,7 @@ func (o *Object) GetItem(key any) *Object {
 
 // HasItem returns true if the object has the item.
 func (o *Object) HasItem(value any) bool {
-	return python3.PySequence_Contains(o.obj, ToPyObject(value)) == 1
+	return cpy3.PySequence_Contains(o.obj, ToPyObject(value)) == 1
 }
 
 // GetAttr returns the attribute value of the object.
