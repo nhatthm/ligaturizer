@@ -101,7 +101,7 @@ $ docker run --rm \
 
 ### Prerequisites
 
-- `Go >= 1.21` with `cgo` enabled
+- `Go >= 1.22` with `cgo` enabled
 - `golangci-lint >= 1.55.2` (optional)
 - `Python = 3.11` with `fontforge` python bindings
 

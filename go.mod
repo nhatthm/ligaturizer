@@ -1,6 +1,6 @@
 module go.nhat.io/ligaturizer
 
-go 1.21
+go 1.22
 
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
@@ -11,8 +11,8 @@ require (
 	github.com/spf13/afero v1.11.0
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
-	go.nhat.io/cpy3 v0.0.0-20240211052030-bde1bc76d495
-	go.nhat.io/once v0.2.0
+	go.nhat.io/psmat v0.0.0-20240214133216-617e4ed5863f
+	go.nhat.io/python3 v0.0.0-20240214125738-12c51604fa60
 	go.uber.org/zap v1.21.0
 )
 
@@ -23,6 +23,8 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	go.nhat.io/cpy3 v0.0.0-20240211052030-bde1bc76d495 // indirect
+	go.nhat.io/once v0.2.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect

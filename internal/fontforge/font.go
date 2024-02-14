@@ -5,8 +5,7 @@ import (
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
-
-	"go.nhat.io/ligaturizer/internal/python3"
+	"go.nhat.io/python3"
 )
 
 // Font is a wrapper around a Python object.
@@ -32,9 +31,9 @@ func (f *Font) DecRef() {
 	f.obj.DecRef()
 }
 
-// PyObject returns the underlying PyObject.
-func (f *Font) PyObject() *python3.PyObject {
-	return f.obj.PyObject()
+// AsObject returns the underlying Object.
+func (f *Font) AsObject() *python3.Object {
+	return f.obj
 }
 
 // FontName returns the font name of the font.
@@ -141,7 +140,7 @@ func (f *Font) SFNTNames() SFNTNames {
 	attr := f.obj.GetAttr("sfnt_names")
 	defer attr.DecRef()
 
-	return asSFNTNames(attr)
+	return python3.MustUnmarshalAs[SFNTNames](attr)
 }
 
 // SetSFNTNames sets the SFNT names.
@@ -151,15 +150,15 @@ func (f *Font) SetSFNTNames(keyAndValues ...string) {
 	}
 
 	names := f.SFNTNames()
+	values := make(map[string]string, len(keyAndValues)%2)
 
 	for i := 0; i < len(keyAndValues); i += 2 {
-		key := keyAndValues[i]
-		value := keyAndValues[i+1]
+		values[keyAndValues[i]] = keyAndValues[i+1]
+	}
 
-		for j := range names {
-			if names[j].Key == key {
-				names[j].Value = value
-			}
+	for j := range names {
+		if value, ok := values[names[j].Key]; ok {
+			names[j].Value = value
 		}
 	}
 
@@ -209,9 +208,9 @@ func newFont(obj *python3.Object) *Font {
 // SFNTNames is a list of SFNTName.
 type SFNTNames []SFNTName
 
-// PyObject marshals a SFNTNames to a PyObject.
-func (n SFNTNames) PyObject() *python3.PyObject {
-	return python3.NewTupleFromValues(([]SFNTName)(n)...).PyObject()
+// MarshalPyObject marshals a SFNTName to a python3.Object.
+func (n SFNTNames) MarshalPyObject() *python3.Object {
+	return python3.NewTupleFromValues(([]SFNTName)(n)...).AsObject()
 }
 
 // Find finds a SFNTName by key.
@@ -232,25 +231,13 @@ type SFNTName struct {
 	Value  string
 }
 
-// PyObject marshals a SFNTName to a PyObject.
-func (n SFNTName) PyObject() *python3.PyObject {
-	return python3.NewTupleFromValues(n.Locale, n.Key, n.Value).PyObject()
+// MarshalPyObject marshals a SFNTName to a python3.Object.
+func (n SFNTName) MarshalPyObject() *python3.Object {
+	return python3.NewTupleFromValues(n.Locale, n.Key, n.Value).AsObject()
 }
 
-func asSFNTNames(o *python3.Object) SFNTNames {
-	names := make(SFNTNames, o.Length())
-
-	for i := 0; i < o.Length(); i++ {
-		item := o.GetItem(i)
-		names[i] = asSFNTName(item)
-
-		item.DecRef()
-	}
-
-	return names
-}
-
-func asSFNTName(o *python3.Object) SFNTName {
+// UnmarshalPyObject unmarshals a python3.Object to a SFNTName.
+func (n *SFNTName) UnmarshalPyObject(o *python3.Object) error { //nolint: unparam
 	locale := o.GetItem(0)
 	key := o.GetItem(1)
 	value := o.GetItem(2)
@@ -259,11 +246,13 @@ func asSFNTName(o *python3.Object) SFNTName {
 	defer key.DecRef()
 	defer value.DecRef()
 
-	return SFNTName{
+	*n = SFNTName{
 		Locale: locale.String(),
 		Key:    key.String(),
 		Value:  value.String(),
 	}
+
+	return nil
 }
 
 // buildPattern is a regex pattern to detect build id in semver, such as `1.2 build 110`.

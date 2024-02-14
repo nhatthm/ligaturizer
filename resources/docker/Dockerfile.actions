@@ -32,8 +32,8 @@ APT::Install-Recommends "false";\n\
         /usr/share/info/ \
         /usr/share/groff/ \
         /usr/share/locale/ \
-    && ln -s /usr/lib/python3/dist-packages/fontforge.cpython-311-x86_64-linux-gnu.so /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/fontforge.so \
-    && ln -s /usr/lib/python3/dist-packages/psMat.cpython-311-x86_64-linux-gnu.so /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/psMat.so \
+    && ln -s /usr/lib/python3/dist-packages/fontforge.cpython-${${PYTHON_VERSION%.*}//.}-x86_64-linux-gnu.so /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/fontforge.so \
+    && ln -s /usr/lib/python3/dist-packages/psMat.cpython-${${PYTHON_VERSION%.*}//.}-x86_64-linux-gnu.so /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/psMat.so \
     && mkdir -p /opt/fonts
 
 ADD --chmod=+x resources/scripts/install_firacode /usr/bin/install_firacode

@@ -6,8 +6,7 @@ import (
 	"os"
 
 	"github.com/fatih/color"
-
-	"go.nhat.io/ligaturizer/internal/python3"
+	"go.nhat.io/python3"
 )
 
 // Run runs the application.
