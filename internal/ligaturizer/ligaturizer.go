@@ -6,8 +6,7 @@ import (
 	"strings"
 
 	"github.com/bool64/ctxd"
-
-	"go.nhat.io/ligaturizer/internal/fontforge"
+	"go.nhat.io/fontforge"
 )
 
 // Ligaturizer is a font ligaturizer.

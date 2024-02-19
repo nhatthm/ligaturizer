@@ -12,8 +12,8 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
+	"go.nhat.io/fontforge"
 
-	"go.nhat.io/ligaturizer/internal/fontforge"
 	"go.nhat.io/ligaturizer/internal/ligaturizer"
 	firacodev3 "go.nhat.io/ligaturizer/internal/ligaturizer/firacode/v3"
 	"go.nhat.io/ligaturizer/internal/version"

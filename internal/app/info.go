@@ -9,8 +9,7 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/bool64/ctxd"
 	"github.com/spf13/cobra"
-
-	"go.nhat.io/ligaturizer/internal/fontforge"
+	"go.nhat.io/fontforge"
 )
 
 func infoCommand(logger *ctxd.Logger) *cobra.Command {
