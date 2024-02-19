@@ -9,10 +9,10 @@ import (
 	"strings"
 
 	"github.com/bool64/ctxd"
+	"go.nhat.io/psmat"
 
 	"go.nhat.io/ligaturizer/internal/fontforge"
 	"go.nhat.io/ligaturizer/internal/ligaturizer"
-	"go.nhat.io/ligaturizer/internal/psmat"
 )
 
 var (

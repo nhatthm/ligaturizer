@@ -5,8 +5,7 @@ import (
 	"sync"
 
 	"github.com/spf13/afero"
-
-	"go.nhat.io/ligaturizer/internal/python3"
+	"go.nhat.io/python3"
 )
 
 const moduleName = "fontforge"
@@ -107,9 +106,9 @@ const (
 // LookupType is a font lookup type.
 type LookupType string
 
-// PyObject returns the underlying PyObject.
-func (t LookupType) PyObject() *python3.PyObject {
-	return python3.PyString(string(t))
+// MarshalPyObject returns the underlying PyObject.
+func (t LookupType) MarshalPyObject() *python3.Object {
+	return python3.NewString(string(t))
 }
 
 // Lookup flags.
@@ -123,25 +122,25 @@ const (
 // LookupFlags are font lookup flags.
 type LookupFlags []LookupFlag
 
-// PyObject returns the underlying PyObject.
-func (f LookupFlags) PyObject() *python3.PyObject {
-	return python3.NewTupleFromValues(([]LookupFlag)(f)...).PyObject()
+// MarshalPyObject returns the underlying Object.
+func (f LookupFlags) MarshalPyObject() *python3.Object {
+	return python3.NewTupleFromValues(([]LookupFlag)(f)...).AsObject()
 }
 
 // LookupFlag is a font lookup flag.
 type LookupFlag string
 
-// PyObject returns the underlying PyObject.
-func (f LookupFlag) PyObject() *python3.PyObject {
-	return python3.PyString(string(f))
+// MarshalPyObject returns the underlying Object.
+func (f LookupFlag) MarshalPyObject() *python3.Object {
+	return python3.NewString(string(f))
 }
 
 // LookupFeatures are font lookup features.
 type LookupFeatures []LookupFeature
 
-// PyObject returns the underlying PyObject.
-func (s LookupFeatures) PyObject() *python3.PyObject {
-	return python3.NewTupleFromValues(([]LookupFeature)(s)...).PyObject()
+// MarshalPyObject returns the underlying Object.
+func (s LookupFeatures) MarshalPyObject() *python3.Object {
+	return python3.NewTupleFromValues(([]LookupFeature)(s)...).AsObject()
 }
 
 // LookupFeature is a font lookup feature.
@@ -150,12 +149,12 @@ type LookupFeature struct {
 	Scripts []LookupFeatureScript
 }
 
-// PyObject returns the underlying PyObject.
-func (f LookupFeature) PyObject() *python3.PyObject {
-	return python3.NewTupleFromAnything(
+// MarshalPyObject returns the underlying Object.
+func (f LookupFeature) MarshalPyObject() *python3.Object {
+	return python3.NewTupleFromAny(
 		f.TagName,
 		python3.NewTupleFromValues(f.Scripts...),
-	).PyObject()
+	).AsObject()
 }
 
 // WithScript adds a script to the lookup feature.
@@ -178,9 +177,9 @@ func NewLookupFeature(tag string) LookupFeature {
 // LookupFeatureTag is a font lookup feature tag.
 type LookupFeatureTag string
 
-// PyObject returns the underlying PyObject.
-func (t LookupFeatureTag) PyObject() *python3.PyObject {
-	return python3.PyString(fmt.Sprintf("%-4s", t))
+// MarshalPyObject returns the underlying Object.
+func (t LookupFeatureTag) MarshalPyObject() *python3.Object {
+	return python3.NewString(fmt.Sprintf("%-4s", t))
 }
 
 // LookupFeatureScript is a font lookup feature script.
@@ -189,28 +188,28 @@ type LookupFeatureScript struct {
 	Languages []LookupFeatureScriptLanguage
 }
 
-// PyObject returns the underlying PyObject.
-func (s LookupFeatureScript) PyObject() *python3.PyObject {
-	return python3.NewTupleFromAnything(
+// MarshalPyObject returns the underlying Object.
+func (s LookupFeatureScript) MarshalPyObject() *python3.Object {
+	return python3.NewTupleFromAny(
 		s.Tag,
 		python3.NewTupleFromValues(s.Languages...),
-	).PyObject()
+	).AsObject()
 }
 
 // LookupFeatureScriptTag is a font lookup feature script tag.
 type LookupFeatureScriptTag string
 
-// PyObject returns the underlying PyObject.
-func (t LookupFeatureScriptTag) PyObject() *python3.PyObject {
-	return python3.PyString(fmt.Sprintf("%-4s", t))
+// MarshalPyObject returns the underlying Object.
+func (t LookupFeatureScriptTag) MarshalPyObject() *python3.Object {
+	return python3.NewString(fmt.Sprintf("%-4s", t))
 }
 
 // LookupFeatureScriptLanguage is a font lookup feature script language.
 type LookupFeatureScriptLanguage string
 
-// PyObject returns the underlying PyObject.
-func (l LookupFeatureScriptLanguage) PyObject() *python3.PyObject {
-	return python3.PyString(fmt.Sprintf("%-4s", l))
+// MarshalPyObject returns the underlying Object.
+func (l LookupFeatureScriptLanguage) MarshalPyObject() *python3.Object {
+	return python3.NewString(fmt.Sprintf("%-4s", l))
 }
 
 // AddLookup creates a new lookup with the given name, type and flags. It will tag it with any indicated features.

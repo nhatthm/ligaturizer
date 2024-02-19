@@ -1,6 +1,6 @@
 package fontforge
 
-import "go.nhat.io/ligaturizer/internal/python3"
+import "go.nhat.io/python3"
 
 // Glyph is a font glyph.
 type Glyph struct {
@@ -24,9 +24,9 @@ func (g *Glyph) DecRef() {
 	g.obj.DecRef()
 }
 
-// PyObject returns the underlying PyObject.
-func (g *Glyph) PyObject() *python3.PyObject {
-	return g.obj.PyObject()
+// AsObject returns the underlying Object.
+func (g *Glyph) AsObject() *python3.Object {
+	return g.obj
 }
 
 // GlyphName returns the name of the glyph.

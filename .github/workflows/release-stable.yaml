@@ -24,6 +24,7 @@ jobs:
     outputs:
       go-latest-version: ${{ steps.find-go-version.outputs.go-latest-version }}
       go-supported-versions: ${{ steps.find-go-version.outputs.go-supported-versions }}
+      python-version: ${{ steps.setup.outputs.PYTHON_VERSION }}
     steps:
       - name: Checkout code
         uses: nhatthm/gh-actions/checkout@master
@@ -32,8 +33,15 @@ jobs:
         name: Find Go version
         uses: nhatthm/gh-actions/find-go-version@master
 
+      - name: Setup
+        id: setup
+        run: |
+          make "$GITHUB_OUTPUT"
+
   build-ubuntu:
     runs-on: ubuntu-latest
+    container:
+      image: python:${{ needs.setup.outputs.python-version }}-bookworm
     needs: [setup]
     env:
       GO_LATEST_VERSION: ${{ needs.setup.outputs.go-latest-version }}
@@ -48,11 +56,6 @@ jobs:
         run: |
           make "$GITHUB_ENV"
 
-      - name: Install python
-        uses: nhatthm/gh-actions/setup-python@master
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
       - name: Install Go
         uses: nhatthm/gh-actions/setup-go@master
         with:
@@ -60,9 +63,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-dev python3-fontforge
-          ls -la /usr/lib/python3/dist-packages/
+          apt-get update
+          apt-get install -y python3-dev
 
       - name: Build
         id: build
