@@ -61,8 +61,8 @@ github.com/yudai/gojsondiff v1.0.0/go.mod h1:AY32+k2cwILAkW1fbgxQ5mUmMiZFgLIV+FB
 github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82 h1:BHyfKlQyqbsFN5p3IfnEUduWvb9is428/nNb5L3U01M=
 github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82/go.mod h1:lgjkn3NuSvDfVJdfcVVdX+jpBxNmX4rDAzaS45IcYoM=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
-go.nhat.io/cpy/v3 v3.11.0 h1:27yQJX9tqaVpbWP7bLGZLb1zk274yJY4gMpfKWenorA=
-go.nhat.io/cpy/v3 v3.11.0/go.mod h1:ZB/O/aVbrq5cbn+3AE04Ae5HeplqFZ3jFgo80MwbR24=
+go.nhat.io/cpy/v3 v3.11.1 h1:a3BnCcrDaBeTAJH93GRJXgjYhaP7dzN9igg5D5R20gE=
+go.nhat.io/cpy/v3 v3.11.1/go.mod h1:ZB/O/aVbrq5cbn+3AE04Ae5HeplqFZ3jFgo80MwbR24=
 go.nhat.io/fontforge v0.1.0 h1:d32AZLRqw0rcNBAhC8szw9YMkylD6zbE4wt6abzcf2A=
 go.nhat.io/fontforge v0.1.0/go.mod h1:nYLL7pm89HAlxbv3PoraU2P4PBT24UTPfzg05HKvo1I=
 go.nhat.io/once v0.2.0 h1:tIvETkXlxRlguXN7ttubxzfkC7tUngURKl9YSigT4ic=
