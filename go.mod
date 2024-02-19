@@ -11,6 +11,7 @@ require (
 	github.com/spf13/afero v1.11.0
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
+	go.nhat.io/fontforge v0.0.0-20240219110036-0fb224a0157c
 	go.nhat.io/psmat v0.0.0-20240214133216-617e4ed5863f
 	go.nhat.io/python3 v0.0.0-20240214125738-12c51604fa60
 	go.uber.org/zap v1.21.0
