@@ -13,7 +13,7 @@ require (
 	github.com/stretchr/testify v1.8.4
 	go.nhat.io/fontforge v0.1.0
 	go.nhat.io/psmat v0.1.0
-	go.nhat.io/python/v3 v3.11.0
+	go.nhat.io/python/v3 v3.11.1
 	go.uber.org/zap v1.21.0
 )
 
