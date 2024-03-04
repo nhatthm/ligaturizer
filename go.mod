@@ -10,7 +10,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/spf13/afero v1.11.0
 	github.com/spf13/cobra v1.8.0
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	go.nhat.io/fontforge v0.1.0
 	go.nhat.io/psmat v0.1.0
 	go.nhat.io/python/v3 v3.11.1
