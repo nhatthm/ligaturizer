@@ -9,7 +9,7 @@ require (
 	github.com/fatih/color v1.17.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/spf13/afero v1.11.0
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.9.0
 	go.nhat.io/fontforge v0.1.0
 	go.nhat.io/psmat v0.1.0
