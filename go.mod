@@ -3,7 +3,7 @@ module go.nhat.io/ligaturizer
 go 1.22
 
 require (
-	github.com/Masterminds/semver/v3 v3.2.1
+	github.com/Masterminds/semver/v3 v3.3.0
 	github.com/bool64/ctxd v1.2.1
 	github.com/bool64/zapctxd v1.1.1
 	github.com/fatih/color v1.17.0
