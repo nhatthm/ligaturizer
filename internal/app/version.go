@@ -34,7 +34,7 @@ func runVersion(stdout, stderr io.Writer, showFull bool) {
 		rev = info.Revision.Short()
 	}
 
-	_, _ = fmt.Fprintf(stdout, "%s (rev: %s; %s; %s/%s)\n",
+	_, _ = fmt.Fprintf(stdout, "%s (rev: %s; %s; %s/%s)\n", //nolint: errcheck
 		info.Version,
 		rev,
 		info.GoVersion,
@@ -45,13 +45,13 @@ func runVersion(stdout, stderr io.Writer, showFull bool) {
 		return
 	}
 
-	_, _ = fmt.Fprintln(stderr)
-	_, _ = fmt.Fprintf(stderr, "build user: %s\n", info.BuildUser)
-	_, _ = fmt.Fprintf(stderr, "build date: %s\n", info.BuildDate)
-	_, _ = fmt.Fprintln(stderr)
-	_, _ = fmt.Fprintln(stderr, "dependencies:")
+	_, _ = fmt.Fprintln(stderr)                                    //nolint: errcheck
+	_, _ = fmt.Fprintf(stderr, "build user: %s\n", info.BuildUser) //nolint: errcheck
+	_, _ = fmt.Fprintf(stderr, "build date: %s\n", info.BuildDate) //nolint: errcheck
+	_, _ = fmt.Fprintln(stderr)                                    //nolint: errcheck
+	_, _ = fmt.Fprintln(stderr, "dependencies:")                   //nolint: errcheck
 
 	for _, dep := range info.Dependencies {
-		_, _ = fmt.Fprintf(stderr, "  %s: %s\n", dep.Path, dep.Version)
+		_, _ = fmt.Fprintf(stderr, "  %s: %s\n", dep.Path, dep.Version) //nolint: errcheck
 	}
 }
