@@ -41,7 +41,7 @@ func ligaturizeCommand(logger *ctxd.Logger) *cobra.Command {
 		Use:          "ligaturizer [flags] input-font-file",
 		Short:        "Ligaturize a font",
 		SilenceUsage: true,
-		Args: func(cmd *cobra.Command, args []string) error {
+		Args: func(_ *cobra.Command, args []string) error {
 			if l := len(args); l == 0 {
 				return errInputFontFileNotSpecified
 			} else if l > 1 {
@@ -50,7 +50,7 @@ func ligaturizeCommand(logger *ctxd.Logger) *cobra.Command {
 
 			return nil
 		},
-		PreRunE: func(cmd *cobra.Command, args []string) error {
+		PreRunE: func(*cobra.Command, []string) error {
 			if ligaturizerCfg.LigatureFontFile == "" && ligaturizerCfg.LigatureFontDir == "" {
 				return errLigatureFontFileAndDirNotSpecified
 			}

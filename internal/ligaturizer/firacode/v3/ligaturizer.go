@@ -204,7 +204,7 @@ func (l *Ligaturizer) addLigature(
 		prevs := make([]string, 0, i)
 		nexts := chars.Names()[i+1:]
 
-		for j := 0; j < i; j++ {
+		for j := range i {
 			prevs = append(prevs, getCharName(j))
 		}
 

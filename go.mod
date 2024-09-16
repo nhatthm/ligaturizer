@@ -1,6 +1,8 @@
 module go.nhat.io/ligaturizer
 
-go 1.22
+go 1.23
+
+toolchain go1.23.0
 
 require (
 	github.com/Masterminds/semver/v3 v3.3.0
@@ -27,7 +29,7 @@ require (
 	go.nhat.io/cpy/v3 v3.11.1 // indirect
 	go.nhat.io/once v0.2.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/sys v0.18.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
+	golang.org/x/text v0.18.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
