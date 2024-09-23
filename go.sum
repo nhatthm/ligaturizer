@@ -2,12 +2,12 @@ github.com/Masterminds/semver/v3 v3.3.0 h1:B8LGeaivUe71a5qox1ICM/JLl0NqZSW5CHyL+
 github.com/Masterminds/semver/v3 v3.3.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
 github.com/bool64/ctxd v1.2.1 h1:hARFteq0zdn4bwfmxLhak3fXFuvtJVKDH2X29VV/2ls=
 github.com/bool64/ctxd v1.2.1/go.mod h1:ZG6QkeGVLTiUl2mxPpyHmFhDzFZCyocr9hluBV3LYuc=
-github.com/bool64/dev v0.2.34 h1:P9n315P8LdpxusnYQ0X7MP1CZXwBK5ae5RZrd+GdSZE=
-github.com/bool64/dev v0.2.34/go.mod h1:iJbh1y/HkunEPhgebWRNcs8wfGq7sjvJ6W5iabL8ACg=
+github.com/bool64/dev v0.2.36 h1:yU3bbOTujoxhWnt8ig8t94PVmZXIkCaRj9C57OtqJBY=
+github.com/bool64/dev v0.2.36/go.mod h1:iJbh1y/HkunEPhgebWRNcs8wfGq7sjvJ6W5iabL8ACg=
 github.com/bool64/shared v0.1.5 h1:fp3eUhBsrSjNCQPcSdQqZxxh9bBwrYiZ+zOKFkM0/2E=
 github.com/bool64/shared v0.1.5/go.mod h1:081yz68YC9jeFB3+Bbmno2RFWvGKv1lPKkMP6MHJlPs=
-github.com/bool64/zapctxd v1.1.1 h1:6a5R70Xu0Ih0VVS2heSV2NMGO7fQLMlsriE5d+xKhhk=
-github.com/bool64/zapctxd v1.1.1/go.mod h1:hs+b7T9vhsI5ploJmkQw+Fyq+thpBnl9YX1agZOTuI0=
+github.com/bool64/zapctxd v1.2.0 h1:HVlATfuXzxppbWnpvVWhz1exG+Ntsy8uSF7GE6Pf3T4=
+github.com/bool64/zapctxd v1.2.0/go.mod h1:NT/Cg8PP11T7Sqd5QNW0HA/wo59uZBWImLhGSX9tLQw=
 github.com/cpuguy83/go-md2man/v2 v2.0.4/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
