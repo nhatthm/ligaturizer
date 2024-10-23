@@ -8,7 +8,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.3.0
 	github.com/bool64/ctxd v1.2.1
 	github.com/bool64/zapctxd v1.2.0
-	github.com/fatih/color v1.17.0
+	github.com/fatih/color v1.18.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/spf13/afero v1.11.0
 	github.com/spf13/cobra v1.8.1
