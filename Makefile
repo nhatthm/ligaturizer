@@ -7,7 +7,7 @@ APP ?= ligaturizer
 
 PYTHON_VERSION ?= 3.11
 ALPINE_VERSION ?= 3.19
-GOLANGCI_LINT_VERSION ?= v1.61.0
+GOLANGCI_LINT_VERSION ?= v1.64.7
 
 GO ?= go
 GOLANGCI_LINT ?= $(shell go env GOPATH)/bin/golangci-lint-$(GOLANGCI_LINT_VERSION)
