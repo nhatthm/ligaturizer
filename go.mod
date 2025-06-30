@@ -5,7 +5,7 @@ go 1.23.0
 toolchain go1.23.5
 
 require (
-	github.com/Masterminds/semver/v3 v3.3.1
+	github.com/Masterminds/semver/v3 v3.4.0
 	github.com/bool64/ctxd v1.2.1
 	github.com/bool64/zapctxd v1.2.0
 	github.com/fatih/color v1.18.0
