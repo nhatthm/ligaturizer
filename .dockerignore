@@ -1,0 +1,10 @@
+.dockerignore
+.editorconfig
+.github/
+.gitignore
+.golangci.yaml
+codecov.yml
+LICENSE
+out/
+README.md
+resources/docker/
