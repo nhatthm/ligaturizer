@@ -19,6 +19,11 @@ import (
 	"go.nhat.io/ligaturizer/internal/version"
 )
 
+const (
+	extOTF = ".otf"
+	extTTF = ".ttf"
+)
+
 var ligaturizerCfg = ligaturizerConfig{}
 
 var (
@@ -185,11 +190,11 @@ func runLigaturize(ctx context.Context, cfg ligaturizerConfig, logger ctxd.Logge
 	updateVersion(inputFont, cfg.BuildID)
 
 	// Output.
-	outputType := ".ttf"
+	outputType := extTTF
 
 	ext := strings.ToLower(filepath.Ext(inputFont.Path()))
-	if ext == ".otf" {
-		outputType = ".otf"
+	if ext == extOTF {
+		outputType = extOTF
 	}
 
 	outputFile := filepath.Join(cfg.OutputDir, fmt.Sprintf("%s%s", inputFont.FontName(), outputType))
@@ -215,7 +220,7 @@ func getLigatureFontFile(ctx context.Context, cfg ligaturizerConfig, inputFontNa
 	}
 
 	fileName := filepath.Join(cfg.LigatureFontDir, fmt.Sprintf("FiraCode%s", getFontWeight(inputFontName)))
-	extensions := []string{".otf", ".ttf"}
+	extensions := []string{extOTF, extTTF}
 
 	for _, ext := range extensions {
 		file := fmt.Sprintf("%s%s", fileName, ext)
