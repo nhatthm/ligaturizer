@@ -22,7 +22,7 @@ import (
 var ligaturizerCfg = ligaturizerConfig{}
 
 var (
-	errInputFontFileNotSpecified          = errors.New("input font file must be specified")
+	errInputFontPathNotSpecified          = errors.New("input font path must be specified")
 	errLigatureFontFileAndDirNotSpecified = errors.New("either ligature font file or ligature font dir must be specified")
 	errLigatureFontDirNotFound            = errors.New("ligature font dir not found")
 	errLigatureFontUnsupported            = errors.New("unsupported ligature font")
@@ -38,12 +38,12 @@ func init() { //nolint: gochecknoinits
 
 func ligaturizeCommand(logger *ctxd.Logger) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:          "ligaturizer [flags] input-font-file",
+		Use:          "ligaturizer [flags] input-font-path",
 		Short:        "Ligaturize a font",
 		SilenceUsage: true,
 		Args: func(_ *cobra.Command, args []string) error {
 			if l := len(args); l == 0 {
-				return errInputFontFileNotSpecified
+				return errInputFontPathNotSpecified
 			} else if l > 1 {
 				return fmt.Errorf("accepts only 1 arg, received %d", l) //nolint: goerr113
 			}
@@ -58,9 +58,9 @@ func ligaturizeCommand(logger *ctxd.Logger) *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			ligaturizerCfg.InputFontFile = args[0]
+			inputPath := args[0]
 
-			return runLigaturize(cmd.Context(), ligaturizerCfg, *logger)
+			return runLigaturize(cmd.Context(), inputPath, &ligaturizerCfg, *logger)
 		},
 	}
 
@@ -135,7 +135,37 @@ func loadLigatureConfig() error {
 	return nil
 }
 
-func runLigaturize(ctx context.Context, cfg ligaturizerConfig, logger ctxd.Logger) error { //nolint: funlen
+func runLigaturize(ctx context.Context, input string, cfg *ligaturizerConfig, logger ctxd.Logger) error {
+	fs := afero.NewOsFs()
+	if ok, err := afero.IsDir(fs, input); err != nil {
+		return fmt.Errorf("failed to check input font path: %w", err)
+	} else if !ok {
+		cfg.InputFontFile = input
+
+		return runLigaturizeFont(ctx, *cfg, logger)
+	}
+
+	files, err := afero.ReadDir(fs, input)
+	if err != nil {
+		return fmt.Errorf("failed to read input font directory: %w", err)
+	}
+
+	for _, f := range files {
+		ext := strings.ToLower(filepath.Ext(f.Name()))
+		if ext != extTTF && ext != extOTF {
+			continue
+		}
+
+		cfg.InputFontFile = filepath.Join(input, f.Name())
+		if err := runLigaturizeFont(ctx, *cfg, logger); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func runLigaturizeFont(ctx context.Context, cfg ligaturizerConfig, logger ctxd.Logger) error { //nolint: funlen
 	// Prepare.
 	inputFont, err := fontforge.Open(cfg.InputFontFile)
 	if err != nil {
