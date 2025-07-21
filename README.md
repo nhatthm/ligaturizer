@@ -60,6 +60,20 @@ $ ligaturizer /opt/fonts/DejaVuSansMono.ttf \
   --ligature-font-file /opt/fonts/FiraCode3/otf/FiraCode-Regular.otf \
 ```
 
+or
+
+```shell
+$ ligaturizer /path/to/font-dir
+  --ligature-font-file /path/to/firacode-v3-otf-font-file \
+```
+
+For example:
+
+```shell
+$ ligaturizer /opt/fonts/DejaVuSansMono/ \
+  --ligature-font-file /opt/fonts/FiraCode3/otf/FiraCode-Regular.otf \
+```
+
 > [!Note]
 > If you don't provide a ligature font file, you must specify the `--ligature-font-dir` option, point it to the directory that contains the FiraCode OTF font files. For example:
 >
