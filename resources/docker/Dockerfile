@@ -1,4 +1,4 @@
-ARG GO_VERSION=1.22
+ARG GO_VERSION=1.23
 ARG ALPINE_VERSION=3.19
 FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS builder
 
@@ -6,11 +6,14 @@ ARG VERSION=dev
 ARG REVISION=""
 ARG USER=""
 
-WORKDIR /go/src/go.nhat.io/ligaturizer
-COPY ../.. .
-
 RUN set -ex \
     && apk --no-cache add ca-certificates bash gcc musl-dev git pkgconfig make python3-dev
+
+WORKDIR /go/src/go.nhat.io/ligaturizer
+RUN --mount=type=bind,source=go.mod,target=go.mod \
+    --mount=type=bind,source=go.sum,target=go.sum \
+    go mod download
+COPY . .
 
 RUN VERSION=$VERSION REVISION=$REVISION USER=$USER make build
 
