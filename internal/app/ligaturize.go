@@ -158,7 +158,7 @@ func runLigaturize(ctx context.Context, cfg ligaturizerConfig, logger ctxd.Logge
 
 	defer ligFont.Close() //nolint: errcheck
 
-	logger.Debug(ctx, "loaded ligature font", "file", cfg.InputFontFile)
+	logger.Debug(ctx, "loaded ligature font", "file", ligFontFile)
 
 	if cfg.OutputName == "" {
 		cfg.OutputName = inputFont.FamilyName()
