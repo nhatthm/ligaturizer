@@ -213,7 +213,8 @@ func getLigatureFontFile(ctx context.Context, cfg ligaturizerConfig, inputFontNa
 		return cfg.LigatureFontFile, nil
 	}
 
-	if ok, err := afero.DirExists(afero.NewOsFs(), cfg.LigatureFontDir); err != nil {
+	fs := afero.NewOsFs()
+	if ok, err := afero.DirExists(fs, cfg.LigatureFontDir); err != nil {
 		return "", fmt.Errorf("failed to check ligature font dir: %w", err)
 	} else if !ok {
 		return "", fmt.Errorf("%w: %s", errLigatureFontDirNotFound, cfg.LigatureFontDir)
@@ -225,7 +226,7 @@ func getLigatureFontFile(ctx context.Context, cfg ligaturizerConfig, inputFontNa
 	for _, ext := range extensions {
 		file := fmt.Sprintf("%s%s", fileName, ext)
 
-		if ok, err := afero.Exists(afero.NewOsFs(), file); err != nil {
+		if ok, err := afero.Exists(fs, file); err != nil {
 			return "", fmt.Errorf("failed to check ligature font file: %w", err)
 		} else if ok {
 			logger.Debug(ctx, "found ligature font in dir", "file", file)
