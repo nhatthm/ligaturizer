@@ -53,8 +53,8 @@ github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82 h1:BHyfKlQyqbsFN5p3Ifn
 github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82/go.mod h1:lgjkn3NuSvDfVJdfcVVdX+jpBxNmX4rDAzaS45IcYoM=
 go.nhat.io/cpy/v3 v3.11.2 h1:6+9rz9UAMg2j3ryZ/r7m9KMTDua88uJcBjU+lHzJ+Jg=
 go.nhat.io/cpy/v3 v3.11.2/go.mod h1:i/ZDT/zYfaqSIXteB3ZXum49Hpi2wcRmYDLX6/Yg57E=
-go.nhat.io/fontforge v0.3.0 h1:S/iTLDucSC5igizv+NTz3L2j3J0MirTmkuMeMMcSA6I=
-go.nhat.io/fontforge v0.3.0/go.mod h1:abIFP8SHv5E9H7F+wi16dEVLFdtTxCzryq8uCPFS2D8=
+go.nhat.io/fontforge v0.4.0 h1:C6I4kGOZWsgLdMEAl4e3OC+hTDN2+iW7/6KooylVGKE=
+go.nhat.io/fontforge v0.4.0/go.mod h1:pRudkY/05gxmbFBnXKDHpuSnu0m9itXBcC+9u9KsG8M=
 go.nhat.io/once v0.3.0 h1:AwMxs8GWXhWS30Al5YbxDRvUwSo1XmgBNn1dr/x/KCQ=
 go.nhat.io/once v0.3.0/go.mod h1:1nB6JRBNV5S3GC/UIUtNDpfXxjlEOh55WyD2DxgQrsE=
 go.nhat.io/psmat v0.3.0 h1:jc39zIMRSwLrSgfAqGhRRvwy0j8LiV8V/OEZMUYjWAs=

@@ -1,6 +1,8 @@
 module go.nhat.io/ligaturizer
 
-go 1.24
+go 1.23.0
+
+toolchain go1.24.0
 
 require (
 	github.com/Masterminds/semver/v3 v3.4.0
@@ -11,7 +13,7 @@ require (
 	github.com/spf13/afero v1.14.0
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
-	go.nhat.io/fontforge v0.3.0
+	go.nhat.io/fontforge v0.4.0
 	go.nhat.io/psmat v0.3.0
 	go.nhat.io/python/v3 v3.11.3
 	go.uber.org/zap v1.27.0
