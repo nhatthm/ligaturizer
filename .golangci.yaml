@@ -8,10 +8,12 @@ linters:
     - exhaustruct
     - forbidigo
     - forcetypeassert
+    - funcorder
     - gochecknoglobals
     - ireturn
     - lll
     - mnd
+    - noinlineerr
     - nolintlint
     - nonamedreturns
     - paralleltest
