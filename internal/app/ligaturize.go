@@ -45,7 +45,7 @@ func ligaturizeCommand(logger *ctxd.Logger) *cobra.Command {
 			if l := len(args); l == 0 {
 				return errInputFontFileNotSpecified
 			} else if l > 1 {
-				return fmt.Errorf("accepts only 1 arg, received %d", l) //nolint: goerr113
+				return fmt.Errorf("accepts only 1 arg, received %d", l) //nolint: err113
 			}
 
 			return nil
