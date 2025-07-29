@@ -28,7 +28,7 @@ Copy the ligatures (glyphs and rendering information) from [Fira Code v3.1](http
 
 ## Prerequisites
 
-- `Python = 3.11` with `fontforge` python bindings
+- `Python = 3.12` with `fontforge` python bindings
     - For Debian/Ubuntu they are available in `python3-fontforge` package.
     - For OpenSUSE and NixOS, they are included in the `fontforge` package.
     - For macOS, they are available via brew (`brew install fontforge`).
@@ -86,7 +86,7 @@ $ ligaturizer -h
 
 ### Using docker
 
-If you have problem with installing `fontforge` or `python3.11`, you can use the docker version instead. You don't have to specify the `--ligature-font-file` or `--ligature-font-dir` option, the docker image already contains the FiraCode font files.
+If you have problem with installing `fontforge` or `python3.12`, you can use the docker version instead. You don't have to specify the `--ligature-font-file` or `--ligature-font-dir` option, the docker image already contains the FiraCode font files.
 
 ```shell
 $ docker run --rm \
@@ -101,9 +101,9 @@ $ docker run --rm \
 
 ### Prerequisites
 
-- `Go >= 1.23` with `cgo` enabled
+- `Go >= 1.24` with `cgo` enabled
 - `golangci-lint >= 1.55.2` (optional)
-- `Python = 3.11` with `fontforge` python bindings
+- `Python = 3.12` with `fontforge` python bindings
 
 [<sub><sup>[table of contents]</sup></sub>](#table-of-contents)
 
