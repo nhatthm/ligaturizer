@@ -4,6 +4,7 @@ package app
 import (
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/fatih/color"
 	python3 "go.nhat.io/python/v3"
@@ -11,6 +12,9 @@ import (
 
 // Run runs the application.
 func Run() {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
 	defer python3.Finalize()
 
 	defer func() {
