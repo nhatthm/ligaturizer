@@ -19,15 +19,22 @@ import (
 	"go.nhat.io/ligaturizer/internal/version"
 )
 
+const (
+	extOTF = ".otf"
+	extTTF = ".ttf"
+)
+
 var ligaturizerCfg = ligaturizerConfig{}
 
 var (
-	errInputFontFileNotSpecified          = errors.New("input font file must be specified")
-	errLigatureFontFileAndDirNotSpecified = errors.New("either ligature font file or ligature font dir must be specified")
-	errLigatureFontDirNotFound            = errors.New("ligature font dir not found")
-	errLigatureFontUnsupported            = errors.New("unsupported ligature font")
-	errLigatureFontVersionNotFound        = errors.New("could not find version of ligature font")
-	errLigatureFontNotFound               = errors.New("ligature font not found")
+	errInputFontFileNotSpecified                 = errors.New("input font file must be specified")
+	errLigatureFontFileAndDirAndNameNotSpecified = errors.New("ligature font file or ligature font dir or ligature font name must be specified")
+	errLigatureFontNameSpecifiedWithoutDir       = errors.New("ligature font dir must be specified if ligature font name is specified")
+	errLigatureFontFileAndNameSpecified          = errors.New("ligature font file and ligature font name must not both be specified")
+	errLigatureFontDirNotFound                   = errors.New("ligature font dir not found")
+	errLigatureFontUnsupported                   = errors.New("unsupported ligature font")
+	errLigatureFontVersionNotFound               = errors.New("could not find version of ligature font")
+	errLigatureFontNotFound                      = errors.New("ligature font not found")
 )
 
 func init() { //nolint: gochecknoinits
@@ -38,7 +45,7 @@ func init() { //nolint: gochecknoinits
 
 func ligaturizeCommand(logger *ctxd.Logger) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:          "ligaturizer [flags] input-font-file",
+		Use:          "ligaturizer [flags] input-font-path",
 		Short:        "Ligaturize a font",
 		SilenceUsage: true,
 		Args: func(_ *cobra.Command, args []string) error {
@@ -51,16 +58,22 @@ func ligaturizeCommand(logger *ctxd.Logger) *cobra.Command {
 			return nil
 		},
 		PreRunE: func(*cobra.Command, []string) error {
-			if ligaturizerCfg.LigatureFontFile == "" && ligaturizerCfg.LigatureFontDir == "" {
-				return errLigatureFontFileAndDirNotSpecified
+			if ligaturizerCfg.LigatureFontFile == "" && ligaturizerCfg.LigatureFontDir == "" && ligaturizerCfg.LigatureFontName == "" {
+				return errLigatureFontFileAndDirAndNameNotSpecified
+			} else if ligaturizerCfg.LigatureFontName != "" {
+				if ligaturizerCfg.LigatureFontFile != "" {
+					return errLigatureFontFileAndNameSpecified
+				} else if ligaturizerCfg.LigatureFontDir == "" {
+					return errLigatureFontNameSpecifiedWithoutDir
+				}
 			}
 
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			ligaturizerCfg.InputFontFile = args[0]
+			inputPath := args[0]
 
-			return runLigaturize(cmd.Context(), ligaturizerCfg, *logger)
+			return runLigaturize(cmd.Context(), inputPath, &ligaturizerCfg, *logger)
 		},
 	}
 
@@ -72,6 +85,9 @@ if unspecified, ligaturize will attempt to pick a suitable one from --ligature-f
 	)
 	cmd.Flags().StringVarP(&ligaturizerCfg.LigatureFontDir, "ligature-font-dir", "D", ligaturizerCfg.LigatureFontDir,
 		`the dir to search for ligature fonts when --ligature-font-file is unspecified.`,
+	)
+	cmd.Flags().StringVarP(&ligaturizerCfg.LigatureFontName, "ligature-font-name", "F", ligaturizerCfg.LigatureFontName,
+		`the font name to copy ligatures from when --ligature-font-dir is specified and --ligature-font-file is unspecified.`,
 	)
 	cmd.Flags().StringVarP(&ligaturizerCfg.OutputDir, "output-dir", "O", ligaturizerCfg.OutputDir,
 		`the directory to save the ligaturized font in.
@@ -102,6 +118,7 @@ this will result in punctuation that matches the ligatures more closely, but may
 type ligaturizerConfig struct {
 	LigatureFontFile             string  `envconfig:"LIGATURE_FONT_FILE"`
 	LigatureFontDir              string  `envconfig:"LIGATURE_FONT_DIR"`
+	LigatureFontName             string  `envconfig:"LIGATURE_FONT_NAME"`
 	InputFontFile                string  `envconfig:"INPUT_FONT_FILE"`
 	OutputDir                    string  `envconfig:"OUTPUT_DIR"`
 	OutputName                   string  `envconfig:"OUTPUT_NAME"`
@@ -115,6 +132,10 @@ func loadLigatureConfig() error {
 	err := envconfig.Process("", &ligaturizerCfg)
 	if err != nil {
 		return fmt.Errorf("failed to load ligature config: %w", err)
+	}
+
+	if ligaturizerCfg.LigatureFontName == "" {
+		ligaturizerCfg.LigatureFontName = "FiraCode"
 	}
 
 	if ligaturizerCfg.LigatureFontDir == "" || ligaturizerCfg.OutputDir == "" {
@@ -135,7 +156,7 @@ func loadLigatureConfig() error {
 	return nil
 }
 
-func runLigaturize(ctx context.Context, cfg ligaturizerConfig, logger ctxd.Logger) error { //nolint: funlen
+func runLigaturize(ctx context.Context, input string, cfg ligaturizerConfig, logger ctxd.Logger) error {
 	// Prepare.
 	inputFont, err := fontforge.Open(cfg.InputFontFile)
 	if err != nil {
@@ -146,7 +167,12 @@ func runLigaturize(ctx context.Context, cfg ligaturizerConfig, logger ctxd.Logge
 
 	logger.Debug(ctx, "loaded input font", "file", cfg.InputFontFile)
 
-	ligFontFile, err := getLigatureFontFile(ctx, cfg, inputFont.FontName(), logger)
+	ligatureFontWeights, err := getLigatureFontWeights(&cfg)
+	if err != nil {
+		return fmt.Errorf("failed to get supported font weights from ligature font dir: %w", err)
+	}
+
+	ligFontFile, err := getLigatureFontFile(ctx, cfg, inputFont.FontName(), logger, ligatureFontWeights)
 	if err != nil {
 		return err
 	}
@@ -185,11 +211,11 @@ func runLigaturize(ctx context.Context, cfg ligaturizerConfig, logger ctxd.Logge
 	updateVersion(inputFont, cfg.BuildID)
 
 	// Output.
-	outputType := ".ttf"
+	outputType := extTTF
 
 	ext := strings.ToLower(filepath.Ext(inputFont.Path()))
-	if ext == ".otf" {
-		outputType = ".otf"
+	if ext == extOTF {
+		outputType = extOTF
 	}
 
 	outputFile := filepath.Join(cfg.OutputDir, fmt.Sprintf("%s%s", inputFont.FontName(), outputType))
@@ -203,7 +229,25 @@ func runLigaturize(ctx context.Context, cfg ligaturizerConfig, logger ctxd.Logge
 	return nil
 }
 
-func getLigatureFontFile(ctx context.Context, cfg ligaturizerConfig, inputFontName string, logger ctxd.Logger) (string, error) {
+func getLigatureFontWeights(cfg *ligaturizerConfig) ([]string, error) {
+	ligaFonts, err := afero.ReadDir(afero.NewOsFs(), cfg.LigatureFontDir)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read ligature font dir: %w", err)
+	}
+
+	var weights []string
+
+	for _, f := range ligaFonts {
+		_, weight, found := strings.Cut(strings.TrimSuffix(f.Name(), filepath.Ext(f.Name())), "-")
+		if found {
+			weights = append(weights, strings.ToLower(weight))
+		}
+	}
+
+	return weights, nil
+}
+
+func getLigatureFontFile(ctx context.Context, cfg ligaturizerConfig, inputFontName string, logger ctxd.Logger, ligatureFontWeights []string) (string, error) {
 	if cfg.LigatureFontFile != "" {
 		return cfg.LigatureFontFile, nil
 	}
@@ -214,8 +258,8 @@ func getLigatureFontFile(ctx context.Context, cfg ligaturizerConfig, inputFontNa
 		return "", fmt.Errorf("%w: %s", errLigatureFontDirNotFound, cfg.LigatureFontDir)
 	}
 
-	fileName := filepath.Join(cfg.LigatureFontDir, fmt.Sprintf("FiraCode%s", getFontWeight(inputFontName)))
-	extensions := []string{".otf", ".ttf"}
+	fileName := filepath.Join(cfg.LigatureFontDir, fmt.Sprintf("%s%s", cfg.LigatureFontName, getFontWeight(inputFontName, ligatureFontWeights)))
+	extensions := []string{extOTF, extTTF}
 
 	for _, ext := range extensions {
 		file := fmt.Sprintf("%s%s", fileName, ext)
@@ -234,12 +278,12 @@ func getLigatureFontFile(ctx context.Context, cfg ligaturizerConfig, inputFontNa
 	return "", errLigatureFontNotFound
 }
 
-func getFontWeight(fontName string) string {
+func getFontWeight(fontName string, weights []string) string {
 	fontName = strings.ToLower(fontName)
 
-	for _, weight := range []string{"-Bold", "-Retina", "-Medium", "-Regular", "-Light"} {
-		if strings.HasSuffix(fontName, strings.ToLower(weight)) {
-			return weight
+	for _, weight := range weights {
+		if strings.HasSuffix(fontName, weight) {
+			return "-" + weight
 		}
 	}
 
@@ -251,18 +295,13 @@ func getFontWeight(fontName string) string {
 }
 
 func makeLigaturizer(ligFont *fontforge.Font, logger ctxd.Logger) (ligaturizer.Ligaturizer, error) {
-	fontName, _, _ := strings.Cut(ligFont.FontName(), "-")
-
-	if fontName != "FiraCode" {
-		return nil, fmt.Errorf("%w: %s", errLigatureFontUnsupported, fontName)
-	}
-
 	v := ligFont.Version()
 	if v == nil {
 		return nil, errLigatureFontVersionNotFound
 	}
 
-	if v.Major() != 3 {
+	fontName, _, _ := strings.Cut(ligFont.FontName(), "-")
+	if fontName == "FiraCode" && v.Major() != 3 {
 		return nil, fmt.Errorf("%w: %s %s", errLigatureFontUnsupported, fontName, v.String())
 	}
 
