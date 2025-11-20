@@ -16,7 +16,7 @@ require (
 	go.nhat.io/fontforge v0.5.0
 	go.nhat.io/psmat v0.3.0
 	go.nhat.io/python/v3 v3.12.0
-	go.uber.org/zap v1.27.0
+	go.uber.org/zap v1.27.1
 )
 
 require (
