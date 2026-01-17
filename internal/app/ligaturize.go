@@ -19,6 +19,11 @@ import (
 	"go.nhat.io/ligaturizer/internal/version"
 )
 
+const (
+	extOTF = ".otf"
+	extTTF = ".ttf"
+)
+
 var ligaturizerCfg = ligaturizerConfig{}
 
 var (
@@ -158,7 +163,7 @@ func runLigaturize(ctx context.Context, cfg ligaturizerConfig, logger ctxd.Logge
 
 	defer ligFont.Close() //nolint: errcheck
 
-	logger.Debug(ctx, "loaded ligature font", "file", cfg.InputFontFile)
+	logger.Debug(ctx, "loaded ligature font", "file", ligFontFile)
 
 	if cfg.OutputName == "" {
 		cfg.OutputName = inputFont.FamilyName()
@@ -185,11 +190,11 @@ func runLigaturize(ctx context.Context, cfg ligaturizerConfig, logger ctxd.Logge
 	updateVersion(inputFont, cfg.BuildID)
 
 	// Output.
-	outputType := ".ttf"
+	outputType := extTTF
 
 	ext := strings.ToLower(filepath.Ext(inputFont.Path()))
-	if ext == ".otf" {
-		outputType = ".otf"
+	if ext == extOTF {
+		outputType = extOTF
 	}
 
 	outputFile := filepath.Join(cfg.OutputDir, fmt.Sprintf("%s%s", inputFont.FontName(), outputType))
@@ -208,19 +213,20 @@ func getLigatureFontFile(ctx context.Context, cfg ligaturizerConfig, inputFontNa
 		return cfg.LigatureFontFile, nil
 	}
 
-	if ok, err := afero.DirExists(afero.NewOsFs(), cfg.LigatureFontDir); err != nil {
+	fs := afero.NewOsFs()
+	if ok, err := afero.DirExists(fs, cfg.LigatureFontDir); err != nil {
 		return "", fmt.Errorf("failed to check ligature font dir: %w", err)
 	} else if !ok {
 		return "", fmt.Errorf("%w: %s", errLigatureFontDirNotFound, cfg.LigatureFontDir)
 	}
 
 	fileName := filepath.Join(cfg.LigatureFontDir, fmt.Sprintf("FiraCode%s", getFontWeight(inputFontName)))
-	extensions := []string{".otf", ".ttf"}
+	extensions := []string{extOTF, extTTF}
 
 	for _, ext := range extensions {
 		file := fmt.Sprintf("%s%s", fileName, ext)
 
-		if ok, err := afero.Exists(afero.NewOsFs(), file); err != nil {
+		if ok, err := afero.Exists(fs, file); err != nil {
 			return "", fmt.Errorf("failed to check ligature font file: %w", err)
 		} else if ok {
 			logger.Debug(ctx, "found ligature font in dir", "file", file)
