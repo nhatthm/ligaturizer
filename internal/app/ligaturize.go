@@ -84,6 +84,9 @@ completely replaces the original.`,
 	cmd.Flags().StringVarP(&ligaturizerCfg.OutputNamePrefix, "prefix", "P", ligaturizerCfg.OutputNamePrefix,
 		`string to prefix the name of the generated font with.`,
 	)
+	cmd.Flags().StringVarP(&ligaturizerCfg.OutputNameSuffix, "suffix", "S", ligaturizerCfg.OutputNameSuffix,
+		`string to suffix the name of the generated font with.`,
+	)
 	cmd.Flags().BoolVar(&ligaturizerCfg.CopyCharacterGlyphs, "copy-character-glyphs", ligaturizerCfg.CopyCharacterGlyphs,
 		`copy glyphs for (some) individual characters from the ligature font as well.
 this will result in punctuation that matches the ligatures more closely, but may not fit in as well with the rest of the font`,
@@ -106,6 +109,7 @@ type ligaturizerConfig struct {
 	OutputDir                    string  `envconfig:"OUTPUT_DIR"`
 	OutputName                   string  `envconfig:"OUTPUT_NAME"`
 	OutputNamePrefix             string  `envconfig:"OUTPUT_NAME_PREFIX" default:""`
+	OutputNameSuffix             string  `envconfig:"OUTPUT_NAME_SUFFIX" default:""`
 	CopyCharacterGlyphs          bool    `envconfig:"COPY_CHARACTER_GLYPHS" default:"false"`
 	ScaleCharacterGlyphThreshold float64 `envconfig:"SCALE_CHARACTER_GLYPH_THRESHOLD" default:"0.1"`
 	BuildID                      string  `envconfig:"BUILD_ID"`
@@ -166,6 +170,10 @@ func runLigaturize(ctx context.Context, cfg ligaturizerConfig, logger ctxd.Logge
 
 	if cfg.OutputNamePrefix != "" {
 		cfg.OutputName = fmt.Sprintf("%s %s", cfg.OutputNamePrefix, cfg.OutputName)
+	}
+
+	if cfg.OutputNameSuffix != "" {
+		cfg.OutputName = fmt.Sprintf("%s %s", cfg.OutputName, cfg.OutputNameSuffix)
 	}
 
 	l, err := makeLigaturizer(ligFont, logger)
